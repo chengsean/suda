@@ -1,4 +1,4 @@
-package org.suda.security.config;
+package org.suda.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
