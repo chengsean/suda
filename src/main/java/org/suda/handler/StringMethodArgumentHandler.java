@@ -10,7 +10,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.suda.config.SudaProperties;
-import org.suda.exception.DangerousOperationsException;
+import org.suda.exception.SQLKeyboardDetectedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.AntPathMatcher;
@@ -167,7 +167,7 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         for (String keyword : sqlKeywordList) {
             if (str.contains(keyword)) {
                 logger.warn("检测到入参：'{}'有安全风险问题！", str);
-                throw new DangerousOperationsException("检测到入参：'"+str+"'有安全风险问题！");
+                throw new SQLKeyboardDetectedException("检测到入参：'"+str+"'有安全风险问题！");
             }
         }
         return str;
