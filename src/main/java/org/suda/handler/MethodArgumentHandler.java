@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 方法参数检查处理
- * @author chengshaozhuang
+ * @author shaozhuang.cheng
  * @dateTime 2024-08-02 15:49
  */
 public interface MethodArgumentHandler {

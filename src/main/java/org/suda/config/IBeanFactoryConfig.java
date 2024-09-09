@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 /**
  * BeanFactory配置类
- * @author chengshaozhuang
+ * @author shaozhuang.cheng
  * @dateTime 2024-07-12 06:53
  */
 @Configuration

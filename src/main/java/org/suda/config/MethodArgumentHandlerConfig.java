@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * {@link MethodArgumentHandler}子类实例配置
- * @author chengshaozhuang
+ * @author shaozhuang.cheng
  * @dateTime 2024-08-04 12:45
  */
 @Configuration

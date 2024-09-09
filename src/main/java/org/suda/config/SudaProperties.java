@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * 安全配置
- * @author chengshaozhuang
+ * @author shaozhuang.cheng
  * @dateTime 2024-09-02 13:18
  */
 @ConfigurationProperties(prefix = "suda")
