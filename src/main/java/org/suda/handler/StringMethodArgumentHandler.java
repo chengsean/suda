@@ -26,7 +26,7 @@ import java.util.Objects;
  * 方法字符串参数安全检查，通过重写这些方法来实现：{@link HandlerMethodArgumentResolver#resolveArgument(MethodParameter, ModelAndViewContainer, NativeWebRequest, WebDataBinderFactory)}
  * 或者 {@link org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver#resolveName(String, MethodParameter, NativeWebRequest)}
  * 又或者 {@link org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver#handleResolvedValue(Object, String, MethodParameter, ModelAndViewContainer, NativeWebRequest)}
- * @author shaozhuang.cheng
+ * @author chengshaozhuang
  * @dateTime 2024-07-12 16:08
  */
 public class StringMethodArgumentHandler implements MethodArgumentHandler {
