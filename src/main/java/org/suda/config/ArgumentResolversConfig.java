@@ -41,6 +41,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMetho
 import org.springframework.web.servlet.mvc.method.annotation.ServletResponseMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.SessionAttributeMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
+import org.suda.SecurityServletModelAttributeMethodProcessor;
+import org.suda.handler.MethodArgumentHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,11 +69,14 @@ public class ArgumentResolversConfig {
     private final List<Object> requestResponseBodyAdvice = new ArrayList<>();
     private final RequestMappingHandlerAdapter adapter;
     private final IBeanFactoryConfig.IBeanFactory iBeanFactory;
+    private final MethodArgumentHandler stringMethodArgumentHandler;
 
 
-    public ArgumentResolversConfig(RequestMappingHandlerAdapter adapter, IBeanFactoryConfig.IBeanFactory iBeanFactory) {
+    public ArgumentResolversConfig(RequestMappingHandlerAdapter adapter, IBeanFactoryConfig.IBeanFactory iBeanFactory,
+                                   MethodArgumentHandler stringMethodArgumentHandler) {
         this.adapter = adapter;
         this.iBeanFactory = iBeanFactory;
+        this.stringMethodArgumentHandler = stringMethodArgumentHandler;
         setNewArgumentResolvers();
     }
 
@@ -96,7 +101,7 @@ public class ArgumentResolversConfig {
         resolvers.add(new PathVariableMapMethodArgumentResolver());
         resolvers.add(new MatrixVariableMethodArgumentResolver());
         resolvers.add(new MatrixVariableMapMethodArgumentResolver());
-        resolvers.add(new ServletModelAttributeMethodProcessor(false));
+        resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
         resolvers.add(new RequestResponseBodyMethodProcessor(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
         resolvers.add(new RequestPartMethodArgumentResolver(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
         resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
