@@ -41,6 +41,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SessionAttributeMet
 import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMethodArgumentResolver;
+import org.suda.SecurityPathVariableMapMethodArgumentResolver;
+import org.suda.SecurityPathVariableMethodArgumentResolver;
 import org.suda.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
 
@@ -97,8 +99,8 @@ public class ArgumentResolversConfig {
         // Annotation-based argument resolution
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
         resolvers.add(new RequestParamMapMethodArgumentResolver());
-        resolvers.add(new PathVariableMethodArgumentResolver());
-        resolvers.add(new PathVariableMapMethodArgumentResolver());
+        resolvers.add(new SecurityPathVariableMethodArgumentResolver(stringMethodArgumentHandler));
+        resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
