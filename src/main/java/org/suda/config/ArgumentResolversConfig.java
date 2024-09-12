@@ -2,8 +2,6 @@ package org.suda.config;
 
 import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.MatrixVariableMapMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.MatrixVariableMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.PathVariableMapMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.PathVariableMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
@@ -41,6 +39,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMetho
 import org.springframework.web.servlet.mvc.method.annotation.ServletResponseMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.SessionAttributeMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
+import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
+import org.suda.SecurityMatrixVariableMethodArgumentResolver;
 import org.suda.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
 
@@ -99,8 +99,8 @@ public class ArgumentResolversConfig {
         resolvers.add(new RequestParamMapMethodArgumentResolver());
         resolvers.add(new PathVariableMethodArgumentResolver());
         resolvers.add(new PathVariableMapMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMethodArgumentResolver());
-        resolvers.add(new MatrixVariableMapMethodArgumentResolver());
+        resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));
+        resolvers.add(new SecurityMatrixVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
         resolvers.add(new RequestResponseBodyMethodProcessor(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
         resolvers.add(new RequestPartMethodArgumentResolver(adapter.getMessageConverters(), this.requestResponseBodyAdvice));

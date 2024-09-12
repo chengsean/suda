@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttribu
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 作用于{@link ModelAttribute} 注解对象的参数安全检查
+ * 该对象作用于{@link ModelAttribute} 注解的参数的安全检查
  * @author chengshaozhuang
  * @dateTime 2023-08-06 12:03
  */
