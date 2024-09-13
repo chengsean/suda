@@ -3,7 +3,6 @@ package org.suda.config;
 import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -40,6 +39,7 @@ import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMethodArgumentResolver;
 import org.suda.SecurityPathVariableMapMethodArgumentResolver;
 import org.suda.SecurityPathVariableMethodArgumentResolver;
+import org.suda.SecurityRequestResponseBodyMethodProcessor;
 import org.suda.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
 
@@ -101,8 +101,9 @@ public class ArgumentResolversConfig {
         resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
-        resolvers.add(new RequestResponseBodyMethodProcessor(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
-        resolvers.add(new RequestPartMethodArgumentResolver(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
+        resolvers.add(new SecurityRequestResponseBodyMethodProcessor(adapter.getMessageConverters(),
+                requestResponseBodyAdvice, stringMethodArgumentHandler));
+        resolvers.add(new RequestPartMethodArgumentResolver(adapter.getMessageConverters(), requestResponseBodyAdvice));
         resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
         resolvers.add(new RequestHeaderMapMethodArgumentResolver());
         resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));
@@ -113,7 +114,7 @@ public class ArgumentResolversConfig {
         // Type-based argument resolution
         resolvers.add(new ServletRequestMethodArgumentResolver());
         resolvers.add(new ServletResponseMethodArgumentResolver());
-        resolvers.add(new HttpEntityMethodProcessor(adapter.getMessageConverters(), this.requestResponseBodyAdvice));
+        resolvers.add(new HttpEntityMethodProcessor(adapter.getMessageConverters(), requestResponseBodyAdvice));
         resolvers.add(new RedirectAttributesMethodArgumentResolver());
         resolvers.add(new ModelMethodProcessor());
         resolvers.add(new MapMethodProcessor());
