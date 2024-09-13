@@ -2,11 +2,8 @@ package org.suda.config;
 
 import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.PathVariableMapMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.PathVariableMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
-import org.springframework.web.servlet.mvc.method.annotation.ServletModelAttributeMethodProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -135,7 +132,7 @@ public class ArgumentResolversConfig {
         // Catch-all
         resolvers.add(new PrincipalMethodArgumentResolver());
         resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
-        resolvers.add(new ServletModelAttributeMethodProcessor(true));
+        resolvers.add(new SecurityServletModelAttributeMethodProcessor(true, stringMethodArgumentHandler));
 
         return resolvers;
     }
