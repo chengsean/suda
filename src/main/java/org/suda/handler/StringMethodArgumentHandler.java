@@ -91,15 +91,18 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         for (PropertyDescriptor pd : propertyDescriptors) {
             Method readMethod = pd.getReadMethod();
             Method writeMethod = pd.getWriteMethod();
-            if (readMethod != null && writeMethod != null) {
-                try {
-                    Object value = readMethod.invoke(arg);
-                    if (value instanceof String) {
-                        writeMethod.invoke(arg, handleInjection4Str(value.toString(), servletPath));
-                    }
-                } catch (IllegalAccessException | InvocationTargetException ignore) {
-                    // ignore 'getXXX' and 'setXXX' method Invocation exception
+            if (readMethod == null || writeMethod == null) {
+                continue;
+            }
+            try {
+                Class<?> returnType = readMethod.getReturnType();
+                boolean isStringType = returnType.isAssignableFrom(String.class);
+                if (isStringType) {
+                    String value = Objects.toString(readMethod.invoke(arg), null);
+                    writeMethod.invoke(arg, handleInjection4Str(value, servletPath));
                 }
+            } catch (IllegalAccessException | InvocationTargetException ignore) {
+                // ignore 'getXXX' and 'setXXX' method Invocation exception
             }
         }
         return arg;
