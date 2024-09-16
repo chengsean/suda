@@ -1,8 +1,5 @@
 package org.suda.config;
 
-import org.springframework.web.method.annotation.RequestParamMapMethodArgumentResolver;
-import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
-import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,6 +19,7 @@ import org.springframework.web.method.annotation.RequestHeaderMethodArgumentReso
 import org.springframework.web.method.annotation.SessionStatusMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ContinuationHandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
 import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
@@ -39,6 +37,8 @@ import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMethodArgumentResolver;
 import org.suda.SecurityPathVariableMapMethodArgumentResolver;
 import org.suda.SecurityPathVariableMethodArgumentResolver;
+import org.suda.SecurityRequestParamMapMethodArgumentResolver;
+import org.suda.SecurityRequestParamMethodArgumentResolver;
 import org.suda.SecurityRequestResponseBodyMethodProcessor;
 import org.suda.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
@@ -94,8 +94,8 @@ public class ArgumentResolversConfig {
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>(30);
 
         // Annotation-based argument resolution
-        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), false));
-        resolvers.add(new RequestParamMapMethodArgumentResolver());
+        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), false, stringMethodArgumentHandler));
+        resolvers.add(new SecurityRequestParamMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));
@@ -132,7 +132,7 @@ public class ArgumentResolversConfig {
 
         // Catch-all
         resolvers.add(new PrincipalMethodArgumentResolver());
-        resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), true, stringMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(true, stringMethodArgumentHandler));
 
         return resolvers;
