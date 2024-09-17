@@ -52,8 +52,8 @@ import java.util.List;
  * @dateTime 2023-08-06 01:41
  */
 @Configuration
-@Import({WebMvcAutoConfiguration.class, IBeanFactoryConfig.class, MethodArgumentHandlerConfig.class})
-public class ArgumentResolversConfig {
+@Import({WebMvcAutoConfiguration.class, ArgumentResolverBeanFactoryConfiguration.class, ArgumentHandlerConfiguration.class})
+public class ArgumentResolverConfiguration {
 
     /**
      *检查是否存在Jackson组件
@@ -67,14 +67,14 @@ public class ArgumentResolversConfig {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final List<Object> requestResponseBodyAdvice = new ArrayList<>();
     private final RequestMappingHandlerAdapter adapter;
-    private final IBeanFactoryConfig.IBeanFactory iBeanFactory;
+    private final ArgumentResolverBeanFactory argumentResolverBeanFactory;
     private final MethodArgumentHandler stringMethodArgumentHandler;
 
 
-    public ArgumentResolversConfig(RequestMappingHandlerAdapter adapter, IBeanFactoryConfig.IBeanFactory iBeanFactory,
-                                   MethodArgumentHandler stringMethodArgumentHandler) {
+    public ArgumentResolverConfiguration(RequestMappingHandlerAdapter adapter, ArgumentResolverBeanFactory argumentResolverBeanFactory,
+                                         MethodArgumentHandler stringMethodArgumentHandler) {
         this.adapter = adapter;
-        this.iBeanFactory = iBeanFactory;
+        this.argumentResolverBeanFactory = argumentResolverBeanFactory;
         this.stringMethodArgumentHandler = stringMethodArgumentHandler;
         setNewArgumentResolvers();
     }
@@ -147,7 +147,7 @@ public class ArgumentResolversConfig {
 
     @Nullable
     private ConfigurableBeanFactory getBeanFactory() {
-        BeanFactory beanFactory = iBeanFactory.getInstance();
+        BeanFactory beanFactory = argumentResolverBeanFactory.getInstance();
         if (beanFactory instanceof ConfigurableBeanFactory) {
             return (ConfigurableBeanFactory) beanFactory;
         }

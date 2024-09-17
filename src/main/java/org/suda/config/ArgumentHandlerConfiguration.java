@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(value = {SudaProperties.class})
-public class MethodArgumentHandlerConfig {
+public class ArgumentHandlerConfiguration {
 
     private final SudaProperties properties;
 
-    public MethodArgumentHandlerConfig(SudaProperties properties) {
+    public ArgumentHandlerConfiguration(SudaProperties properties) {
         this.properties = properties;
     }
 
