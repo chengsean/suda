@@ -13,10 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * {@link RequestParamMethodArgumentResolver}扩展类，检测和处理{@link RequestMapping}注解的方法中带有{@link RequestParam}注解的{@link String}对象、
- * 以及无任何注解的{@link String}、{@link MultipartFile}、{@link Part}对象，支持的String参数类型：String，包装类中的String、Map<Object, String>、List<String>等。
+ * 以及无任何注解的字符串参数类型，包括：{@link String}，包装类中的{@link String}、{@link Map<Object,String>}、{@link Collection<String>}，
+ * 文件类型，如：{@link MultipartFile}、{@link Part}等。
  * @author chengshaozhuang
  * @dateTime 2023-07-29 20:13
  */
