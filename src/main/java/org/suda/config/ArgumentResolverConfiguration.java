@@ -69,13 +69,15 @@ public class ArgumentResolverConfiguration {
     private final RequestMappingHandlerAdapter adapter;
     private final ArgumentResolverBeanFactory argumentResolverBeanFactory;
     private final MethodArgumentHandler stringMethodArgumentHandler;
+    private final MethodArgumentHandler fileMethodArgumentHandler;
 
 
     public ArgumentResolverConfiguration(RequestMappingHandlerAdapter adapter, ArgumentResolverBeanFactory argumentResolverBeanFactory,
-                                         MethodArgumentHandler stringMethodArgumentHandler) {
+                                         MethodArgumentHandler stringMethodArgumentHandler, MethodArgumentHandler fileMethodArgumentHandler) {
         this.adapter = adapter;
         this.argumentResolverBeanFactory = argumentResolverBeanFactory;
         this.stringMethodArgumentHandler = stringMethodArgumentHandler;
+        this.fileMethodArgumentHandler = fileMethodArgumentHandler;
         setNewArgumentResolvers();
     }
 
@@ -94,7 +96,8 @@ public class ArgumentResolverConfiguration {
         List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>(30);
 
         // Annotation-based argument resolution
-        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), false, stringMethodArgumentHandler));
+        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), false, stringMethodArgumentHandler,
+                fileMethodArgumentHandler));
         resolvers.add(new SecurityRequestParamMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
@@ -132,7 +135,8 @@ public class ArgumentResolverConfiguration {
 
         // Catch-all
         resolvers.add(new PrincipalMethodArgumentResolver());
-        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), true, stringMethodArgumentHandler));
+        resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), true, stringMethodArgumentHandler,
+                fileMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(true, stringMethodArgumentHandler));
 
         return resolvers;

@@ -1,5 +1,6 @@
 package org.suda;
 
+import org.springframework.web.multipart.support.MultipartResolutionDelegate;
 import org.suda.handler.MethodArgumentHandler;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.MethodParameter;
@@ -22,20 +23,25 @@ import javax.servlet.http.Part;
 public class SecurityRequestParamMethodArgumentResolver extends RequestParamMethodArgumentResolver {
 
     private final MethodArgumentHandler stringMethodArgumentHandler;
+    private final MethodArgumentHandler fileMethodArgumentHandler;
 
     public SecurityRequestParamMethodArgumentResolver(@Nullable ConfigurableBeanFactory beanFactory, boolean useDefaultResolution,
-                                                      MethodArgumentHandler stringMethodArgumentHandler) {
+                                                      MethodArgumentHandler stringMethodArgumentHandler, MethodArgumentHandler fileMethodArgumentHandler) {
         super(beanFactory, useDefaultResolution);
         this.stringMethodArgumentHandler = stringMethodArgumentHandler;
+        this.fileMethodArgumentHandler = fileMethodArgumentHandler;
     }
 
     @Override
     protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest webRequest) throws Exception {
         Object arg = super.resolveName(name, parameter, webRequest);
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
+        if (servletRequest == null) {
+            return arg;
         }
-        return arg;
+        if (MultipartResolutionDelegate.isMultipartArgument(parameter)) {
+            fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
+        }
+        return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }
 }

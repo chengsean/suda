@@ -15,6 +15,7 @@ public class SudaProperties {
     private final XSSAttack xssAttack = new XSSAttack();
     private final SQLInject sqlInject = new SQLInject();
     private final Chars chars = new Chars();
+    private final Files files = new Files();
 
     public XSSAttack getXssAttack() {
         return xssAttack;
@@ -28,9 +29,22 @@ public class SudaProperties {
         return chars;
     }
 
+    public Files getFiles() {
+        return files;
+    }
+
+    public boolean hasBeenCustomized() {
+        return this.chars.hasBeenCustomized() ||
+                this.sqlInject.hasBeenCustomized() ||
+                this.xssAttack.hasBeenCustomized() ||
+                this.files.hasBeenCustomized();
+    }
+
     public static class Chars {
         // 是否对字符串去空格
         private boolean trimEnabled = true;
+
+        private boolean customized = false;
 
         public boolean isTrimEnabled() {
             return trimEnabled;
@@ -38,12 +52,18 @@ public class SudaProperties {
 
         public void setTrimEnabled(boolean trimEnabled) {
             this.trimEnabled = trimEnabled;
+            this.customized = true;
+        }
+
+        public boolean hasBeenCustomized() {
+            return customized;
         }
     }
 
     public static class XSSAttack {
         // 是否启用XSS攻击检查，默认不启用
         private boolean checkEnabled = false;
+        private boolean customized = false;
         // 配置不需要XSS攻击检查的接口（白名单）
         private List<String> servletPathWhitelist = new ArrayList<>();
         // 检查XSS攻击的正则表达式
@@ -56,6 +76,7 @@ public class SudaProperties {
 
         public void setCheckEnabled(boolean checkEnabled) {
             this.checkEnabled = checkEnabled;
+            this.customized = true;
         }
 
         public List<String> getServletPathWhitelist() {
@@ -64,6 +85,7 @@ public class SudaProperties {
 
         public void setServletPathWhitelist(List<String> servletPathWhitelist) {
             this.servletPathWhitelist = servletPathWhitelist;
+            this.customized = true;
         }
 
         public String[] getXssRegexList() {
@@ -72,11 +94,17 @@ public class SudaProperties {
 
         public void setXssRegexList(String[] xssRegexList) {
             this.xssRegexList = xssRegexList;
+            this.customized = true;
+        }
+
+        public boolean hasBeenCustomized() {
+            return customized;
         }
     }
 
     public static class SQLInject {
         private boolean checkEnabled = false;
+        private boolean customized = false;
         private List<String> servletPathWhitelist = new ArrayList<>();
         private String[] sqlKeywordList = new String[] {"and ","exec ","insert ","select ","delete ","update ","drop ","count ","chr ","mid ","master ","truncate ","char ","declare ",";|or ","+|user()"};
 
@@ -94,6 +122,7 @@ public class SudaProperties {
 
         public void setServletPathWhitelist(List<String> servletPathWhitelist) {
             this.servletPathWhitelist = servletPathWhitelist;
+            this.customized = true;
         }
 
         public String[] getSqlKeywordList() {
@@ -102,6 +131,59 @@ public class SudaProperties {
 
         public void setSqlKeywordList(String[] sqlKeywordList) {
             this.sqlKeywordList = sqlKeywordList;
+            this.customized = true;
+        }
+
+        public boolean hasBeenCustomized() {
+            return customized;
+        }
+    }
+
+    public static class Files {
+        private boolean checkEnabled = false;
+        private boolean customized = false;
+        private List<String> servletPathWhitelist = new ArrayList<>();
+        private String[] extensionBlacklist = new String[]{".bat,",".cmd,",".vbs,",".sh,",".java,",
+                ".class,",".js",".ts",".jsp",".html",".htm",".xhtml",".php",".py"};
+
+        public boolean isCheckEnabled() {
+            return checkEnabled;
+        }
+
+        public void setCheckEnabled(boolean checkEnabled) {
+            this.checkEnabled = checkEnabled;
+            this.customized = true;
+        }
+
+        public List<String> getServletPathWhitelist() {
+            return servletPathWhitelist;
+        }
+
+        public void setServletPathWhitelist(List<String> servletPathWhitelist) {
+            this.servletPathWhitelist = servletPathWhitelist;
+            this.customized = true;
+        }
+
+        public String[] getExtensionBlacklist() {
+            return extensionBlacklist;
+        }
+
+        public void setExtensionBlacklist(String[] extensionBlacklist) {
+            this.extensionBlacklist = appendDotIfNecessary(extensionBlacklist);
+            this.customized = true;
+        }
+
+        private String[] appendDotIfNecessary(String[] extensionBlacklist) {
+            String[] normalized = new String[extensionBlacklist.length];
+            for (int i = 0; i < extensionBlacklist.length; i++) {
+                String extension = extensionBlacklist[i];
+                normalized[i] = extension.startsWith(".") ? extension : "." + extension;
+            }
+            return normalized;
+        }
+
+        public boolean hasBeenCustomized() {
+            return customized;
         }
     }
 }
