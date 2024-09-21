@@ -19,7 +19,6 @@ import org.springframework.web.method.annotation.RequestHeaderMethodArgumentReso
 import org.springframework.web.method.annotation.SessionStatusMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.RequestPartMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.ContinuationHandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
 import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
@@ -39,6 +38,7 @@ import org.suda.SecurityPathVariableMapMethodArgumentResolver;
 import org.suda.SecurityPathVariableMethodArgumentResolver;
 import org.suda.SecurityRequestParamMapMethodArgumentResolver;
 import org.suda.SecurityRequestParamMethodArgumentResolver;
+import org.suda.SecurityRequestPartMethodArgumentResolver;
 import org.suda.SecurityRequestResponseBodyMethodProcessor;
 import org.suda.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
@@ -106,7 +106,8 @@ public class ArgumentResolverConfiguration {
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
         resolvers.add(new SecurityRequestResponseBodyMethodProcessor(adapter.getMessageConverters(),
                 requestResponseBodyAdvice, stringMethodArgumentHandler));
-        resolvers.add(new RequestPartMethodArgumentResolver(adapter.getMessageConverters(), requestResponseBodyAdvice));
+        resolvers.add(new SecurityRequestPartMethodArgumentResolver(adapter.getMessageConverters(), requestResponseBodyAdvice,
+                fileMethodArgumentHandler));
         resolvers.add(new RequestHeaderMethodArgumentResolver(getBeanFactory()));
         resolvers.add(new RequestHeaderMapMethodArgumentResolver());
         resolvers.add(new ServletCookieValueMethodArgumentResolver(getBeanFactory()));

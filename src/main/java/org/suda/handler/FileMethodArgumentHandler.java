@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.suda.util.TikaWrapper;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +54,37 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
         else if (isMultipartFileArray(parameter)) {
             checkFileType((MultipartFile[]) arg);
         }
+        else if (Part.class == parameter.getNestedParameterType()) {
+            checkMimeType((Part) arg);
+        }
+        else if (isPartCollection(parameter)) {
+            Collection<Part> parts = (Collection<Part>) arg;
+            checkMimeType(parts.toArray(new Part[0]));
+        }
+        else if (isPartArray(parameter)) {
+            checkMimeType((Part[]) arg);
+        }
         return arg;
+    }
+
+    private void checkMimeType(Part... parts) {
+        if (parts == null) {
+            return;
+        }
+        for (Part part : parts) {
+            if (part == null) {
+                continue;
+            }
+            String filename = part.getSubmittedFileName();
+            try {
+                // 检查文件的真实类型
+                tikaWrapper.checkFileType(filename, part.getInputStream());
+            } catch (IOException e) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Can not Read file '{}' error: {}", filename, e.getMessage());
+                }
+            }
+        }
     }
 
     private void checkFileType(MultipartFile... files) {
@@ -87,6 +118,14 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
 
     private boolean isMultipartFileArray(MethodParameter methodParam) {
         return (MultipartFile.class == methodParam.getNestedParameterType().getComponentType());
+    }
+
+    private boolean isPartCollection(MethodParameter methodParam) {
+        return (Part.class == getCollectionParameterType(methodParam));
+    }
+
+    private boolean isPartArray(MethodParameter methodParam) {
+        return (Part.class == methodParam.getNestedParameterType().getComponentType());
     }
 
     @Nullable
