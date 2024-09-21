@@ -34,9 +34,6 @@ public class SecurityRequestPartMethodArgumentResolver extends RequestPartMethod
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
         Object arg = super.resolveArgument(parameter, mavContainer, request, binderFactory);
         HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            return fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
-        }
-        return arg;
+        return fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }
 }

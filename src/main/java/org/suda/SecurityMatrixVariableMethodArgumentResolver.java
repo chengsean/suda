@@ -25,9 +25,6 @@ public class SecurityMatrixVariableMethodArgumentResolver extends MatrixVariable
     protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
         Object arg = super.resolveName(name, parameter, request);
         HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
-        }
-        return arg;
+        return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }
 }

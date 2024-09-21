@@ -14,7 +14,6 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 文件类型方法参数安全检查
@@ -34,14 +33,17 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
 
     @Override
     @Nullable
-    public Object securityChecks(Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
-        return fileSecurityChecks(arg, Objects.requireNonNull(request).getServletPath(), parameter);
+    public Object securityChecks(@Nullable Object arg, @Nullable HttpServletRequest request, MethodParameter parameter) {
+        return securityChecks0(arg, request, parameter);
     }
 
 
     @SuppressWarnings("unchecked")
-    private Object fileSecurityChecks(Object arg, String servletPath, MethodParameter parameter) {
-        if (arg == null || !fileSecurityChecksEnabled(servletPath)) {
+    private Object securityChecks0(Object arg, HttpServletRequest request, MethodParameter parameter) {
+        if (arg == null || request == null) {
+            return null;
+        }
+        if (!fileSecurityChecksEnabled(request.getServletPath())) {
             return arg;
         }
         if (MultipartFile.class == parameter.getNestedParameterType()) {
@@ -68,9 +70,6 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private void checkMimeType(Part... parts) {
-        if (parts == null) {
-            return;
-        }
         for (Part part : parts) {
             if (part == null) {
                 continue;
@@ -88,9 +87,6 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private void checkFileType(MultipartFile... files) {
-        if (files == null) {
-           return;
-        }
         for (MultipartFile file : files) {
             if (file == null) {
                 continue;

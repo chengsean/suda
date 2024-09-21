@@ -25,12 +25,10 @@ public class SecurityMatrixVariableMapMethodArgumentResolver extends MatrixVaria
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request,
+                                  WebDataBinderFactory binderFactory) throws Exception {
         Object arg = super.resolveArgument(parameter, mavContainer, request, binderFactory);
         HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
-        }
-        return arg;
+        return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }
 }

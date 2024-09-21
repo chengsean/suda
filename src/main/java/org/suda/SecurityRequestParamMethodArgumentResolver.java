@@ -39,9 +39,6 @@ public class SecurityRequestParamMethodArgumentResolver extends RequestParamMeth
     protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest webRequest) throws Exception {
         Object arg = super.resolveName(name, parameter, webRequest);
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest == null) {
-            return arg;
-        }
         if (MultipartResolutionDelegate.isMultipartArgument(parameter)) {
             fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
         }

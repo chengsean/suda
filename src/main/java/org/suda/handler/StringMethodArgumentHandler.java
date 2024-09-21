@@ -41,12 +41,16 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
 
     @Override
     @Nullable
-    public Object securityChecks(Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
-        return securityChecks0(arg, Objects.requireNonNull(request).getServletPath(), parameter);
+    public Object securityChecks(@Nullable Object arg, @Nullable HttpServletRequest request, @Nullable MethodParameter parameter) {
+        return securityChecks0(arg, request, parameter);
     }
 
     @SuppressWarnings("unchecked")
-    private Object securityChecks0(Object arg, String servletPath, MethodParameter parameter) {
+    private Object securityChecks0(Object arg, HttpServletRequest request, MethodParameter parameter) {
+        if (arg == null || request == null) {
+            return null;
+        }
+        String servletPath = request.getServletPath();
         if (arg instanceof String) {
             return handleInjection4Str(arg.toString(), servletPath);
         }
@@ -66,9 +70,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private void handleInjection4StrArray(String[] strings, String servletPath) {
-        if (strings == null) {
-            return;
-        }
         for (int i = 0; i < strings.length; i++) {
             String str = strings[i];
             if (enabledSqlInjection(servletPath)) {
@@ -84,9 +85,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private Object handleSecurity4Object(Object arg, String servletPath) {
-        if (arg == null) {
-            return null;
-        }
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(arg.getClass());
         for (PropertyDescriptor pd : propertyDescriptors) {
             Method readMethod = pd.getReadMethod();
@@ -109,9 +107,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private Collection<Object> handleInjection4Collection(Collection<Object> collection, String servletPath) {
-        if (collection == null) {
-            return null;
-        }
         Object[] objects = collection.toArray(new Object[0]);
         collection.clear();
         for (Object object : objects) {
@@ -125,9 +120,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private Map<Object, Object> handleInjection4Map(Map<Object, Object> map, String servletPath) {
-        if (map == null) {
-            return null;
-        }
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
@@ -144,10 +136,7 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         if (enabledXxsInjection(servletPath)) {
             str = handleXSSInjection(str);
         }
-        if (str != null) {
-            return properties.getChars().isTrimEnabled() ? str.trim() : str;
-        }
-        return null;
+        return properties.getChars().isTrimEnabled() ? str.trim() : str;
     }
 
     private boolean enabledXxsInjection(String servletPath) {

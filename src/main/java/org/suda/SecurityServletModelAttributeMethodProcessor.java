@@ -34,8 +34,6 @@ public class SecurityServletModelAttributeMethodProcessor extends ServletModelAt
         super.bindRequestParameters(binder, webRequest);
         Object attribute = binder.getTarget();
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (attribute != null && servletRequest != null) {
-            stringMethodArgumentHandler.securityChecks(attribute, servletRequest, null);
-        }
+        stringMethodArgumentHandler.securityChecks(attribute, servletRequest, null);
     }
 }

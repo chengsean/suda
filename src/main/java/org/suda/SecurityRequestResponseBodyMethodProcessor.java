@@ -35,9 +35,6 @@ public class SecurityRequestResponseBodyMethodProcessor extends RequestResponseB
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Object arg = super.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
-        }
-        return arg;
+        return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }
 }

@@ -27,9 +27,7 @@ public class SecurityPathVariableMethodArgumentResolver extends PathVariableMeth
     @Override
     protected void handleResolvedValue(Object arg, String name, MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest request) {
         HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
-        if (servletRequest != null) {
-            arg = stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
-        }
+        arg = stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
         super.handleResolvedValue(arg, name, parameter, mavContainer, request);
     }
 }
