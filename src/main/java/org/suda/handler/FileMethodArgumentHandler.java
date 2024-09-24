@@ -2,6 +2,7 @@ package org.suda.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
 import org.suda.config.SudaProperties;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
@@ -14,9 +15,10 @@ import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
- * 文件类型方法参数安全检查
+ * 文件类型参数安全检查
  * @author chengshaozhuang
  * @dateTime 2024-08-01 13:37
  */
@@ -38,7 +40,7 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
     }
 
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","rawtypes"})
     private Object securityChecks0(Object arg, HttpServletRequest request, MethodParameter parameter) {
         if (arg == null || request == null) {
             return null;
@@ -57,19 +59,42 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
             checkFileType((MultipartFile[]) arg);
         }
         else if (Part.class == parameter.getNestedParameterType()) {
-            checkMimeType((Part) arg);
+            checkFileType((Part) arg);
         }
         else if (isPartCollection(parameter)) {
             Collection<Part> parts = (Collection<Part>) arg;
-            checkMimeType(parts.toArray(new Part[0]));
+            checkFileType(parts.toArray(new Part[0]));
         }
         else if (isPartArray(parameter)) {
-            checkMimeType((Part[]) arg);
+            checkFileType((Part[]) arg);
+        }
+        else if (MultiValueMap.class.isAssignableFrom(parameter.getParameterType())) {
+            Class<?> valueType = getValueType(parameter, MultiValueMap.class);
+            checkFileType(valueType, ((MultiValueMap)(arg)).values().toArray());
+        }
+        else if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+            Class<?> valueType = getValueType(parameter, Map.class);
+            checkFileType(valueType, ((Map)(arg)).values().toArray());
         }
         return arg;
     }
 
-    private void checkMimeType(Part... parts) {
+    private void checkFileType(Class<?> valueType, Object... arg) {
+        if (MultipartFile.class == valueType) {
+            checkFileType((MultipartFile[]) arg);
+        }
+        if (valueType == Part.class) {
+            checkFileType((Part[]) arg);
+        }
+    }
+
+    private Class<?> getValueType(MethodParameter parameter, Class<?> wrapperClass) {
+        ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
+        return resolvableType.as(wrapperClass).getGeneric(1).resolve();
+    }
+
+
+    private void checkFileType(Part... parts) {
         for (Part part : parts) {
             if (part == null) {
                 continue;

@@ -98,7 +98,7 @@ public class ArgumentResolverConfiguration {
         // Annotation-based argument resolution
         resolvers.add(new SecurityRequestParamMethodArgumentResolver(getBeanFactory(), false, stringMethodArgumentHandler,
                 fileMethodArgumentHandler));
-        resolvers.add(new SecurityRequestParamMapMethodArgumentResolver(stringMethodArgumentHandler));
+        resolvers.add(new SecurityRequestParamMapMethodArgumentResolver(stringMethodArgumentHandler, fileMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));

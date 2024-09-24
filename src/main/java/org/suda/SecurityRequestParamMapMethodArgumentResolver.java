@@ -1,6 +1,8 @@
 package org.suda;
 
+import org.springframework.core.ResolvableType;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.suda.handler.MethodArgumentHandler;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,11 +12,13 @@ import org.springframework.web.method.annotation.RequestParamMapMethodArgumentRe
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.util.Map;
 
 /**
  * 该对象作用于{@link RequestParam} 注解{@link Map}参数的安全检查
- * 暂不支持{@link MultiValueMap}(2024.09.16)
+ * 支持{@link MultiValueMap<String,MultipartFile>}、{@link MultiValueMap<String,Part>}、{@link MultiValueMap<String,String>}
+ * {@link Map<String,MultipartFile>}、{@link Map<String,Part>}、{@link Map<String,String>}
  * @author chengshaozhuang
  * @dateTime 2024-08-16 11:24
  */
@@ -22,15 +26,36 @@ public class SecurityRequestParamMapMethodArgumentResolver extends RequestParamM
 
 
     private final MethodArgumentHandler stringMethodArgumentHandler;
+    private final MethodArgumentHandler fileMethodArgumentHandler;
 
-    public SecurityRequestParamMapMethodArgumentResolver(MethodArgumentHandler stringMethodArgumentHandler) {
+    public SecurityRequestParamMapMethodArgumentResolver(MethodArgumentHandler stringMethodArgumentHandler,
+                                                         MethodArgumentHandler fileMethodArgumentHandler) {
         this.stringMethodArgumentHandler = stringMethodArgumentHandler;
+        this.fileMethodArgumentHandler = fileMethodArgumentHandler;
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws Exception {
         Object arg = super.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (isMultipartArgument(parameter)) {
+            fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
+        }
         return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
+    }
+
+    private boolean isMultipartArgument(MethodParameter parameter) {
+        ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
+        Class<?> valueType;
+        if (MultiValueMap.class.isAssignableFrom(parameter.getParameterType())) {
+            // MultiValueMap
+            valueType = resolvableType.as(MultiValueMap.class).getGeneric(1).resolve();
+        } else {
+            // Regular Map
+            valueType = resolvableType.asMap().getGeneric(1).resolve();
+        }
+        // File type or String[]
+        return MultipartFile.class == valueType || Part.class == valueType;
     }
 }
