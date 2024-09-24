@@ -5,6 +5,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -19,6 +20,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,7 +48,7 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Object securityChecks0(Object arg, HttpServletRequest request, MethodParameter parameter) {
+    private Object securityChecks0(Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
         if (arg == null || request == null) {
             return null;
         }
@@ -60,6 +62,9 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         if (isStringArray) {
             handleInjection4StrArray((String[])arg, servletPath);
         }
+        if (arg instanceof MultiValueMap) {
+            return handleInjection4MultiValueMap((MultiValueMap<Object, Object>) arg, servletPath);
+        }
         if (arg instanceof Map) {
             return handleInjection4Map((Map<Object, Object>) arg, servletPath);
         }
@@ -67,6 +72,25 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
             return handleInjection4Collection((Collection<Object>) arg, servletPath);
         }
         return handleSecurity4Object(arg, servletPath);
+    }
+
+    private Object handleInjection4MultiValueMap(MultiValueMap<Object, Object> map, String servletPath) {
+        for (Map.Entry<Object, List<Object>> entry : map.entrySet()) {
+            List<Object> values = entry.getValue();
+            try {
+                values.clear();
+            } catch (UnsupportedOperationException e) {
+                logger.warn("The map '{}' cannot be modified.", map.getClass().getName(), e);
+                return map;
+            }
+            Object[] objects = entry.getValue().toArray();
+            for (Object value : objects) {
+                if (value instanceof String) {
+                    map.add(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
+                }
+            }
+        }
+        return map;
     }
 
     private void handleInjection4StrArray(String[] strings, String servletPath) {
@@ -99,8 +123,8 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
                     String value = Objects.toString(readMethod.invoke(arg), null);
                     writeMethod.invoke(arg, handleInjection4Str(value, servletPath));
                 }
-            } catch (IllegalAccessException | InvocationTargetException ignore) {
-                // ignore 'getXXX' and 'setXXX' method Invocation exception
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                logger.warn("Opos!! Calling the '{}' method encountered an unexpected exception.", writeMethod.getName(), e);
             }
         }
         return arg;
@@ -108,7 +132,13 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
 
     private Collection<Object> handleInjection4Collection(Collection<Object> collection, String servletPath) {
         Object[] objects = collection.toArray(new Object[0]);
-        collection.clear();
+        try {
+            collection.clear();
+        } catch (UnsupportedOperationException e) {
+            logger.warn("The collection '{}' cannot be modified.", collection.getClass().getName(), e);
+            // Return value when can not edit this Can
+            return collection;
+        }
         for (Object object : objects) {
             if (object instanceof String) {
                 collection.add(handleInjection4Str(object.toString(), servletPath));
@@ -123,7 +153,13 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
-                map.put(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
+                try {
+                    map.put(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
+                } catch (UnsupportedOperationException e) {
+                    logger.warn("The map '{}' cannot be modified.", map.getClass().getName(), e);
+                   // return value when can not edit this map
+                    return map;
+                }
             }
         }
         return map;
