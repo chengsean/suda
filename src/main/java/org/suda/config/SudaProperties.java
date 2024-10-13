@@ -9,7 +9,7 @@ import java.util.List;
  * @author chengshaozhuang
  * @dateTime 2024-09-02 13:18
  */
-@ConfigurationProperties(prefix = "suda")
+@ConfigurationProperties(prefix = "suda.security")
 public class SudaProperties {
 
     private final XSSAttack xssAttack = new XSSAttack();
