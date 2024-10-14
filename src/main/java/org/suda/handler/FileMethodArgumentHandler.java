@@ -8,6 +8,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
+import org.suda.util.ServletRequestUtils;
 import org.suda.util.TikaWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +46,8 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
         if (arg == null || request == null) {
             return null;
         }
-        if (!fileSecurityChecksEnabled(request.getServletPath())) {
+        String servletPath = ServletRequestUtils.getServletPath(request);
+        if (!fileSecurityChecksEnabled(servletPath)) {
             return arg;
         }
         if (MultipartFile.class == parameter.getNestedParameterType()) {

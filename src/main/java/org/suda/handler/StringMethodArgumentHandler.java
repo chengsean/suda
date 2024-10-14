@@ -13,6 +13,7 @@ import org.suda.exception.SQLKeyboardDetectedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.AntPathMatcher;
+import org.suda.util.ServletRequestUtils;
 import org.suda.util.StringEscapeUtils;
 import org.suda.util.StringUtils;
 
@@ -53,7 +54,7 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         if (arg == null || request == null) {
             return null;
         }
-        String servletPath = request.getServletPath();
+        String servletPath = ServletRequestUtils.getServletPath(request);
         if (arg instanceof String) {
             return handleInjection4Str(arg.toString(), servletPath);
         }
