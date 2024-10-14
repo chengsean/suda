@@ -38,6 +38,13 @@ public class Result<T> implements Serializable {
     public Result() {
     }
 
+    public static<T> Result<T> OK() {
+        Result<T> result = new Result<>();
+        result.setSuccess(true);
+        result.setCode(Constant.SC_OK);
+        return result;
+    }
+
     public static<T> Result<T> OK(T data) {
         Result<T> result = new Result<>();
         result.setData(data);
