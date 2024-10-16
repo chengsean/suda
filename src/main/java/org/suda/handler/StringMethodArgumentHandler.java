@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,9 +68,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         }
         if (arg instanceof Map) {
             return handleInjection4Map((Map<Object, Object>) arg, servletPath);
-        }
-        if (arg instanceof Collection) {
-            return handleInjection4Collection((Collection<Object>) arg, servletPath);
         }
         return handleSecurity4Object(arg, servletPath);
     }
@@ -130,25 +126,6 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
             }
         }
         return arg;
-    }
-
-    private Collection<Object> handleInjection4Collection(Collection<Object> collection, String servletPath) {
-        Object[] objects = collection.toArray(new Object[0]);
-        try {
-            collection.clear();
-        } catch (UnsupportedOperationException e) {
-            logger.warn("The collection '{}' cannot be modified.", collection.getClass().getName(), e);
-            // Return value when can not edit this Can
-            return collection;
-        }
-        for (Object object : objects) {
-            if (object instanceof String) {
-                collection.add(handleInjection4Str(object.toString(), servletPath));
-            } else {
-                collection.add(object);
-            }
-        }
-        return collection;
     }
 
     private Map<Object, Object> handleInjection4Map(Map<Object, Object> map, String servletPath) {
