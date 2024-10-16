@@ -57,9 +57,9 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         if (arg instanceof String) {
             return handleInjection4Str(arg.toString(), servletPath);
         }
-        // 检查是否为String数组
-        boolean isStringArray = parameter != null ? String.class == parameter.getNestedParameterType().getComponentType()
-                : arg instanceof String[];
+        // String数组
+        boolean isStringArray = String.class == arg.getClass().getComponentType() ||
+                parameter != null && String.class == parameter.getNestedParameterType().getComponentType();
         if (isStringArray) {
             handleInjection4StrArray((String[])arg, servletPath);
         }
@@ -94,15 +94,8 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     private void handleInjection4StrArray(String[] strings, String servletPath) {
         for (int i = 0; i < strings.length; i++) {
             String str = strings[i];
-            if (enabledSqlInjection(servletPath)) {
-                strings[i] = handleSQLInjection(str);
-            }
-            if (enabledXxsInjection(servletPath)) {
-                strings[i] = handleXSSInjection(str);
-            }
-            if (str != null && properties.getChars().isTrimEnabled()) {
-                strings[i] = str.trim();
-            }
+            Object obj = handleInjection4Str(str, servletPath);
+            strings[i] = Objects.toString(obj, null);
         }
     }
 
@@ -145,6 +138,9 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private Object handleInjection4Str(String str, String servletPath) {
+        if (str == null) {
+            return null;
+        }
         if (enabledSqlInjection(servletPath)) {
             str = handleSQLInjection(str);
         }
