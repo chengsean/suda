@@ -49,7 +49,11 @@ class SecurityRequestParamMethodArgumentResolverTests {
     static final String NAME_VALUE = " chengshaozhuang   ";
     static final String ID_KEY = "id";
     static final String COLL_NAME = "collection";
+    static final String PART_PARAM_NAME = "part";
     static final String MULTIPART_FILE_PARAM_NAME = "file";
+    final String fakePdf = "fake-pdf.pdf";
+    final String blacklistFile = "blacklist-file.js";
+    final String secureFile = "secure-file.txt";
 
     @Test
     void testRequestParamStringTrimWithoutRequestParamAnnotation() throws Exception {
@@ -93,8 +97,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
     void testRequestParamMultipartFileIllegalFileTypeCheckWithoutRequestParamAnnotation()
             throws ClassloaderUnavailableException, IOException {
         // MultipartFile：测试上传篡改扩展名的文件
-        String filename = "fake-pdf.pdf";
-        MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
+        MockPart mockPart = createMockPart(fakePdf, MULTIPART_FILE_PARAM_NAME);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
         assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                 .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
@@ -104,8 +107,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
     void testRequestParamMultipartFileCheckBlacklistFileCheckWithoutRequestParamAnnotation()
             throws ClassloaderUnavailableException, IOException {
         // MultipartFile：测试上传黑名单的文件
-        String filename = "blacklist-file.js";
-        MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
+        MockPart mockPart = createMockPart(blacklistFile, MULTIPART_FILE_PARAM_NAME);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
         assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
                 .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
@@ -115,9 +117,39 @@ class SecurityRequestParamMethodArgumentResolverTests {
     void testRequestParamMultipartFileSuccessCheckWithoutRequestParamAnnotation()
             throws ClassloaderUnavailableException, Exception {
         // MultipartFile：测试上传文件成功
-        String filename = "secure-file.txt";
+        String filename = secureFile;
         MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
+        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart))
+                .andExpect(jsonPath("$.data").value(filename));
+    }
+
+    @Test
+    void testRequestParamPartIllegalFileTypeCheckWithoutRequestParamAnnotation()
+            throws ClassloaderUnavailableException, IOException {
+        // Part：测试上传篡改扩展名的文件
+        MockPart mockPart = createMockPart(fakePdf, PART_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamPartCheckWithoutRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamPartBlacklistFileCheckWithoutRequestParamAnnotation()
+            throws ClassloaderUnavailableException, IOException {
+        // Part：测试上传黑名单的文件
+        MockPart mockPart = createMockPart(blacklistFile, PART_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamPartCheckWithoutRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamPartSecureFileCheckWithoutRequestParamAnnotation() throws ClassloaderUnavailableException, Exception {
+        // Part：测试上传文件成功
+        String filename = secureFile;
+        MockPart mockPart = createMockPart(filename, PART_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamPartCheckWithoutRequestParamAnnotation";
         this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart))
                 .andExpect(jsonPath("$.data").value(filename));
     }
@@ -182,9 +214,9 @@ class SecurityRequestParamMethodArgumentResolverTests {
         @RequestMapping(value = "/requestParamCollectionStringTrimWithRequestParamAnnotationWithName",
                 method = RequestMethod.GET)
         public Result<?> requestParamCollectionStringTrimWithRequestParamAnnotationWithName(
-                @RequestParam(name = COLL_NAME) Collection<Object> coll) {
-            for (Object value : coll) {
-                logger.info("Collection value: '{}', String length after trim: {}", value, value.toString().length());
+                @RequestParam(name = COLL_NAME) Collection<String> coll) {
+            for (String value : coll) {
+                logger.info("Collection value: '{}', String length after trim: {}", value, value.length());
             }
             return Result.OK(coll);
         }
@@ -193,6 +225,12 @@ class SecurityRequestParamMethodArgumentResolverTests {
         public Result<?> requestParamMultipartFileCheckWithoutRequestParamAnnotation(MultipartFile file) {
             printLog(file);
             return Result.OK(file.getOriginalFilename());
+        }
+
+        @RequestMapping(value = "/requestParamPartCheckWithoutRequestParamAnnotation")
+        public Result<?> requestParamPartCheckWithoutRequestParamAnnotation(Part part) {
+            printLog(part);
+            return Result.OK(part.getSubmittedFileName());
         }
 
         private void printLog(Object obj) {
