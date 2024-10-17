@@ -1,29 +1,39 @@
 package org.suda;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.suda.common.Constant;
 import org.suda.common.Result;
 import org.suda.config.ArgumentResolverConfiguration;
+import org.suda.exception.DangerousFileTypeException;
+import org.suda.exception.IllegalFileTypeException;
+
 import javax.annotation.Resource;
+import javax.servlet.http.Part;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
- * description
- *
+ * {@link SecurityRequestParamMethodArgumentResolver}请求接口对应的方法参数解析器单元测试
  * @author chengshaozhuang
  */
 @SpringBootTest(classes = {
@@ -39,29 +49,20 @@ class SecurityRequestParamMethodArgumentResolverTests {
     static final String NAME_VALUE = " chengshaozhuang   ";
     static final String ID_KEY = "id";
     static final String COLL_NAME = "collection";
+    static final String MULTIPART_FILE_PARAM_NAME = "file";
 
     @Test
-    void testRequestParamStringTrimWithoutAnnotation() throws Exception {
+    void testRequestParamStringTrimWithoutRequestParamAnnotation() throws Exception {
         // 测试接口无注解字符串参数去空格是否有效
-        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimWithoutAnnotation";
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimWithoutRequestParamAnnotation";
         testRequestParamStringTrim(url);
     }
 
     @Test
-    void testRequestParamStringTrimByRequestParamAnnotation() throws Exception {
+    void testRequestParamStringTrimWithRequestParamAnnotation() throws Exception {
         // 测试接口有'RequestParam'注解字符串参数去空格是否有效
-        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimByRequestParamAnnotation";
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimWithRequestParamAnnotation";
         testRequestParamStringTrim(url);
-    }
-
-    @Test
-    void testRequestParamStringTrimByRequestParamAnnotationWithName() throws Exception {
-        // 测试接口有'RequestParam'注解、注解带有'name'参数去空格是否有效
-        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimByRequestParamAnnotationWithName";
-        final int id = 1024;
-        mockMvc.perform(get(url).param(NAME_KEY, NAME_VALUE)
-                .param(ID_KEY, Objects.toString(id))).andExpect(jsonPath("$.data.name").value(NAME_VALUE.trim()))
-                .andExpect(jsonPath("$.data.id").value(id));
     }
 
     private void testRequestParamStringTrim(String url) throws Exception {
@@ -69,13 +70,85 @@ class SecurityRequestParamMethodArgumentResolverTests {
     }
 
     @Test
-    void testRequestParamCollectionStringTrimByRequestParamAnnotation() throws Exception {
-        // 测试接口有'RequestParam'注解的'MultiValueMap<String,String>'参数去空格是否有效
-        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamCollectionStringTrimByRequestParamAnnotation";
+    void testRequestParamStringTrimWithRequestParamAnnotationWithName() throws Exception {
+        // 测试接口有'RequestParam'注解、注解带有'name'参数去空格是否有效
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimWithRequestParamAnnotationWithName";
+        final int id = 1024;
+        mockMvc.perform(get(url).param(NAME_KEY, NAME_VALUE)
+                .param(ID_KEY, Objects.toString(id))).andExpect(jsonPath("$.data.name").value(NAME_VALUE.trim()))
+                .andExpect(jsonPath("$.data.id").value(id));
+    }
+
+    @Test
+    void testRequestParamCollectionStringTrimWithRequestParamAnnotationWithName() throws Exception {
+        // 测试接口有'RequestParam'注解的'Collection<String>'参数去空格是否有效
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamCollectionStringTrimWithRequestParamAnnotationWithName";
         final String value2 = " gengshao  ";
         mockMvc.perform(get(url).param(COLL_NAME, NAME_VALUE, value2))
                 .andExpect(jsonPath("$.data[0]").value(NAME_VALUE.trim()))
                 .andExpect(jsonPath("$.data[1]").value(value2.trim()));
+    }
+
+    @Test
+    void testRequestParamMultipartFileIllegalFileTypeCheckWithoutRequestParamAnnotation()
+            throws ClassloaderUnavailableException, IOException {
+        // MultipartFile：测试上传篡改扩展名的文件
+        String filename = "fake-pdf.pdf";
+        MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultipartFileCheckBlacklistFileCheckWithoutRequestParamAnnotation()
+            throws ClassloaderUnavailableException, IOException {
+        // MultipartFile：测试上传黑名单的文件
+        String filename = "blacklist-file.js";
+        MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(MockMvcRequestBuilders.multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultipartFileSuccessCheckWithoutRequestParamAnnotation()
+            throws ClassloaderUnavailableException, Exception {
+        // MultipartFile：测试上传文件成功
+        String filename = "secure-file.txt";
+        MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
+        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart))
+                .andExpect(jsonPath("$.data").value(filename));
+    }
+
+    private MockPart createMockPart(String filename, String paramName) throws ClassloaderUnavailableException, IOException {
+        ClassLoader classloader = getClassLoader();
+        String pathname = Objects.requireNonNull(classloader.getResource(filename)).getFile();
+        File file = new File(pathname);
+        return new MockPart(paramName, file.getName(), FileUtils.readFileToByteArray(file));
+    }
+
+    private ClassLoader getClassLoader() throws ClassloaderUnavailableException {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        if (classloader == null) {
+            classloader = this.getClass().getClassLoader();
+        }
+        if (classloader == null) {
+            try {
+                classloader = ClassLoader.getSystemClassLoader();
+            } catch (Throwable t) {
+                // 无法获取类加载器。。。
+                throw new ClassloaderUnavailableException(t);
+            }
+        }
+        return classloader;
+    }
+
+    private static class ClassloaderUnavailableException extends Throwable {
+        public ClassloaderUnavailableException(Throwable t) {
+            super((t));
+        }
     }
 
     @RestController
@@ -84,30 +157,19 @@ class SecurityRequestParamMethodArgumentResolverTests {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
-        @RequestMapping(value = "/requestParamStringTrimWithoutAnnotation", method = RequestMethod.GET)
-        public Result<?> requestParamStringTrimWithoutAnnotation(String name) {
+        @RequestMapping(value = "/requestParamStringTrimWithoutRequestParamAnnotation", method = RequestMethod.GET)
+        public Result<?> requestParamStringTrimWithoutRequestParamAnnotation(String name) {
             printLog(name);
             return Result.OK(name);
         }
 
-        @RequestMapping(value = "/requestParamStringTrimByRequestParamAnnotation", method = RequestMethod.GET)
-        public Result<?> requestParamStringTrimByRequestParamAnnotation(@RequestParam String name) {
+        @RequestMapping(value = "/requestParamStringTrimWithRequestParamAnnotation", method = RequestMethod.GET)
+        public Result<?> requestParamStringTrimWithRequestParamAnnotation(@RequestParam String name) {
             printLog(name);
             return Result.OK(name);
         }
-
-        private void printLog(Object obj) {
-            if (obj == null) {
-                logger.info("param: null");
-            } else if (obj instanceof String) {
-                logger.info("param: '{}'，String length after trim: {}", obj, obj.toString().length());
-            } else {
-                logger.info("param: {}", obj);
-            }
-        }
-
-        @RequestMapping(value = "/requestParamStringTrimByRequestParamAnnotationWithName", method = RequestMethod.GET)
-        public Result<?> requestParamStringTrimByRequestParamAnnotationWithName(@RequestParam(name = "name") String name,
+        @RequestMapping(value = "/requestParamStringTrimWithRequestParamAnnotationWithName", method = RequestMethod.GET)
+        public Result<?> requestParamStringTrimWithRequestParamAnnotationWithName(@RequestParam(name = "name") String name,
                                                                                 Integer id) {
             printLog(name);
             printLog(id);
@@ -117,12 +179,36 @@ class SecurityRequestParamMethodArgumentResolverTests {
             return Result.OK(map);
         }
 
-        @RequestMapping(value = "/requestParamCollectionStringTrimByRequestParamAnnotation", method = RequestMethod.GET)
-        public Result<?> requestParamCollectionStringTrimByRequestParamAnnotation(@RequestParam(name = COLL_NAME) Collection<Object> coll) {
+        @RequestMapping(value = "/requestParamCollectionStringTrimWithRequestParamAnnotationWithName",
+                method = RequestMethod.GET)
+        public Result<?> requestParamCollectionStringTrimWithRequestParamAnnotationWithName(
+                @RequestParam(name = COLL_NAME) Collection<Object> coll) {
             for (Object value : coll) {
                 logger.info("Collection value: '{}', String length after trim: {}", value, value.toString().length());
             }
             return Result.OK(coll);
+        }
+
+        @RequestMapping(value = "/requestParamMultipartFileCheckWithoutRequestParamAnnotation")
+        public Result<?> requestParamMultipartFileCheckWithoutRequestParamAnnotation(MultipartFile file) {
+            printLog(file);
+            return Result.OK(file.getOriginalFilename());
+        }
+
+        private void printLog(Object obj) {
+            if (obj == null) {
+                logger.info("param: null");
+            } else if (obj instanceof String) {
+                logger.info("param: '{}'，String length after trim: {}", obj, obj.toString().length());
+            } else if (obj instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile) obj;
+                logger.info("file name: '{}'，file length: {}", file.getOriginalFilename(), file.getSize());
+            } else if (obj instanceof Part) {
+                Part part = (Part) obj;
+                logger.info("file name: '{}'，file length: {}", part.getSubmittedFileName(), part.getSize());
+            } else {
+                logger.info("param: {}", obj);
+            }
         }
     }
 }
