@@ -1,10 +1,12 @@
 package org.suda;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,18 @@ import org.springframework.web.multipart.MultipartFile;
 import org.suda.common.Constant;
 import org.suda.common.Result;
 import org.suda.config.ArgumentResolverConfiguration;
+import org.suda.exception.DangerousFileTypeException;
+import org.suda.exception.IllegalFileTypeException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Part;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -38,6 +47,11 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
     private MockMvc mockMvc;
     final String nameKey = "name";
     final String nameValue = " chengshaozhuang   ";
+    final String partParamName = "part";
+    final String multipartFileParamName = "file";
+    final String fakePdf = "fake-pdf.pdf";
+    final String blacklistFile = "blacklist-file.js";
+    final String secureFile = "secure-file.txt";
 
     @Test
     void testRequestParamMapStringTrimWithRequestParamAnnotation() throws Exception {
@@ -45,6 +59,87 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapStringTrimWithRequestParamAnnotation";
         mockMvc.perform(get(url).param(nameKey, nameValue))
                 .andExpect(jsonPath("$.data.name").value(nameValue.trim()));
+    }
+
+    @Test
+    void testRequestParamMapMultipartFileCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
+        // 测试上传篡改扩展名的文件
+        MockPart mockPart = createMockPart(fakePdf, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapMultipartFileCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMapMultipartFileCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
+        // 测试上传黑名单的文件
+        MockPart mockPart = createMockPart(blacklistFile, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapMultipartFileCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMapMultipartFileCheckSuccess() throws ClassloaderUnavailableException, Exception {
+        // 测试上传文件成功
+        MockPart mockPart = createMockPart(secureFile, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapMultipartFileCheckWithRequestParamAnnotation";
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+    }
+
+    @Test
+    void testRequestParamMapPartCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
+        // 测试上传篡改扩展名的文件
+        MockPart mockPart = createMockPart(fakePdf, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapPartByRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMapPartCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
+        // 测试上传黑名单的文件
+        MockPart mockPart = createMockPart(blacklistFile, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapPartByRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMapPartCheckSuccess() throws ClassloaderUnavailableException, Exception {
+        // 测试上传文件成功
+        MockPart mockPart = createMockPart(secureFile, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapPartByRequestParamAnnotation";
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+    }
+
+    private MockPart createMockPart(String filename, String paramName) throws ClassloaderUnavailableException, IOException {
+        ClassLoader classloader = getClassLoader();
+        String pathname = Objects.requireNonNull(classloader.getResource(filename)).getFile();
+        File file = new File(pathname);
+        return new MockPart(paramName, file.getName(), FileUtils.readFileToByteArray(file));
+    }
+
+    private ClassLoader getClassLoader() throws ClassloaderUnavailableException {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        if (classloader == null) {
+            classloader = this.getClass().getClassLoader();
+        }
+        if (classloader == null) {
+            try {
+                classloader = ClassLoader.getSystemClassLoader();
+            } catch (Throwable t) {
+                // 无法获取类加载器。。。
+                throw new ClassloaderUnavailableException(t);
+            }
+        }
+        return classloader;
+    }
+
+    static class ClassloaderUnavailableException extends Throwable {
+        public ClassloaderUnavailableException(Throwable t) {
+            super((t));
+        }
     }
 
     @RestController
@@ -57,6 +152,18 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         public Result<?> requestParamMapStringTrimWithRequestParamAnnotation(@RequestParam Map<String, String> map) {
             printLog(map);
             return Result.OK(map);
+        }
+
+        @RequestMapping(value = "/requestParamMapMultipartFileCheckWithRequestParamAnnotation")
+        public Result<?> requestParamMapMultipartFileCheckWithRequestParamAnnotation(@RequestParam Map<String, MultipartFile> map) {
+            printLog(map);
+            return Result.OK(new ArrayList<>(map.values()).get(0).getOriginalFilename());
+        }
+
+        @RequestMapping(value = "/requestParamMapPartByRequestParamAnnotation")
+        public Result<?> requestParamMapPartByRequestParamAnnotation(@RequestParam Map<String, Part> map) {
+            printLog(map);
+            return Result.OK(new ArrayList<>(map.values()).get(0).getSubmittedFileName());
         }
 
         @SuppressWarnings("unchecked")
