@@ -121,6 +121,58 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
                 .andExpect(jsonPath("$.data.name").value(nameValue.trim()));
     }
 
+    @Test
+    void testRequestParamMultiValueMapMultipartFileCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
+        // 测试上传篡改扩展名的文件
+        MockPart mockPart = createMockPart(fakePdf, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultiValueMapMultipartFileCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
+        // 测试上传黑名单的文件
+        MockPart mockPart = createMockPart(blacklistFile, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultiValueMapMultipartFileCheckSuccess() throws ClassloaderUnavailableException, Exception {
+        // 测试上传文件成功
+        MockPart mockPart = createMockPart(secureFile, multipartFileParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation";
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+    }
+
+    @Test
+    void testRequestParamMultiValueMapPartCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
+        // 测试上传篡改扩展名的文件
+        MockPart mockPart = createMockPart(fakePdf, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapPartCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(IllegalFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultiValueMapPartCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
+        // 测试上传黑名单的文件
+        MockPart mockPart = createMockPart(blacklistFile, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapPartCheckWithRequestParamAnnotation";
+        assertThatThrownBy(() -> this.mockMvc.perform(multipart(url)
+                .part(mockPart))).message().contains(DangerousFileTypeException.class.getName());
+    }
+
+    @Test
+    void testRequestParamMultiValueMapPartCheckSuccess() throws ClassloaderUnavailableException, Exception {
+        // 测试上传文件成功
+        MockPart mockPart = createMockPart(secureFile, partParamName);
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapPartCheckWithRequestParamAnnotation";
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+    }
+
     private MockPart createMockPart(String filename, String paramName) throws ClassloaderUnavailableException, IOException {
         ClassLoader classloader = getClassLoader();
         String pathname = Objects.requireNonNull(classloader.getResource(filename)).getFile();
@@ -176,9 +228,23 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
 
         @RequestMapping(value = "/requestParamMultiValueMapStringTrimWithRequestParamAnnotation", method = RequestMethod.GET)
         public Result<?> requestParamMultiValueMapStringTrimWithRequestParamAnnotation(
-                @RequestParam MultiValueMap<String, String> map) {
-            printLog(map);
-            return Result.OK(map);
+                @RequestParam MultiValueMap<String, String> multiValueMap) {
+            printLog(multiValueMap);
+            return Result.OK(multiValueMap);
+        }
+
+        @RequestMapping(value = "/requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation")
+        public Result<?> requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation(
+                @RequestParam MultiValueMap<String, MultipartFile> multiValueMap) {
+            printLog(multiValueMap);
+            return Result.OK(new ArrayList<>(multiValueMap.values()).get(0).get(0).getOriginalFilename());
+        }
+
+        @RequestMapping(value = "/requestParamMultiValueMapPartCheckWithRequestParamAnnotation")
+        public Result<?> requestParamMultiValueMapPartByRequestParamAnnotation(
+                @RequestParam MultiValueMap<String, Part> multiValueMap) {
+            printLog(multiValueMap);
+            return Result.OK(new ArrayList<>(multiValueMap.values()).get(0).get(0).getSubmittedFileName());
         }
 
         @SuppressWarnings("unchecked")
