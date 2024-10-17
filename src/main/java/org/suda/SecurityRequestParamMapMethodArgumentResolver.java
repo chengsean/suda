@@ -40,7 +40,7 @@ public class SecurityRequestParamMapMethodArgumentResolver extends RequestParamM
         Object arg = super.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
         HttpServletRequest servletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
         if (isMultipartArgument(parameter)) {
-            fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
+            return fileMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
         }
         return stringMethodArgumentHandler.securityChecks(arg, servletRequest, parameter);
     }

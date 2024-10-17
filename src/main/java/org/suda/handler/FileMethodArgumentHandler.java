@@ -71,30 +71,24 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
             checkFileType((Part[]) arg);
         }
         else if (MultiValueMap.class.isAssignableFrom(parameter.getParameterType())) {
-            Class<?> valueType = getValueType(parameter, MultiValueMap.class);
-            checkFileType(valueType, ((MultiValueMap)(arg)).values().toArray());
+            checkFileType(((MultiValueMap)arg).values().toArray());
         }
         else if (Map.class.isAssignableFrom(parameter.getParameterType())) {
-            Class<?> valueType = getValueType(parameter, Map.class);
-            checkFileType(valueType, ((Map)(arg)).values().toArray());
+            checkFileType(((Map)arg).values().toArray());
         }
         return arg;
     }
 
-    private void checkFileType(Class<?> valueType, Object... arg) {
-        if (MultipartFile.class == valueType) {
-            checkFileType((MultipartFile[]) arg);
-        }
-        if (valueType == Part.class) {
-            checkFileType((Part[]) arg);
+    private void checkFileType(Object... objects) {
+        for (Object object : objects) {
+            if (object instanceof MultipartFile) {
+                checkFileType((MultipartFile) object);
+            }
+            if (object instanceof Part) {
+                checkFileType((Part) object);
+            }
         }
     }
-
-    private Class<?> getValueType(MethodParameter parameter, Class<?> wrapperClass) {
-        ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
-        return resolvableType.as(wrapperClass).getGeneric(1).resolve();
-    }
-
 
     private void checkFileType(Part... parts) {
         for (Part part : parts) {
