@@ -71,7 +71,7 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
             checkFileType((Part[]) arg);
         }
         else if (MultiValueMap.class.isAssignableFrom(parameter.getParameterType())) {
-            checkFileType(((MultiValueMap)arg).values().toArray());
+            ((MultiValueMap)arg).values().forEach(object -> checkFileType(((List<Object>) object).toArray()));
         }
         else if (Map.class.isAssignableFrom(parameter.getParameterType())) {
             checkFileType(((Map)arg).values().toArray());
