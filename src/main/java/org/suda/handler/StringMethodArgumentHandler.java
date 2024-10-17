@@ -75,17 +75,18 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     private Object handleInjection4MultiValueMap(MultiValueMap<Object, Object> map, String servletPath) {
         for (Map.Entry<Object, List<Object>> entry : map.entrySet()) {
             List<Object> values = entry.getValue();
+            if (values.isEmpty() || !(values.get(0) instanceof String)) {
+                return map;
+            }
+            Object[] objects = entry.getValue().toArray();
             try {
                 values.clear();
             } catch (UnsupportedOperationException e) {
                 logger.warn("The map '{}' cannot be modified.", map.getClass().getName(), e);
                 return map;
             }
-            Object[] objects = entry.getValue().toArray();
             for (Object value : objects) {
-                if (value instanceof String) {
-                    map.add(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
-                }
+                map.add(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
             }
         }
         return map;
