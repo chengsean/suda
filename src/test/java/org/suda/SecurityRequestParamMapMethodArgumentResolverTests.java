@@ -113,6 +113,14 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
     }
 
+    @Test
+    void testRequestParamMultiValueMapStringTrimWithRequestParamAnnotation() throws Exception {
+        // 测试接口有'RequestParam'注解的'MultiValueMap<String,String>'参数去空格是否有效
+        String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapStringTrimWithRequestParamAnnotation";
+        mockMvc.perform(get(url).param(nameKey, nameValue))
+                .andExpect(jsonPath("$.data.name").value(nameValue.trim()));
+    }
+
     private MockPart createMockPart(String filename, String paramName) throws ClassloaderUnavailableException, IOException {
         ClassLoader classloader = getClassLoader();
         String pathname = Objects.requireNonNull(classloader.getResource(filename)).getFile();
@@ -164,6 +172,13 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         public Result<?> requestParamMapPartByRequestParamAnnotation(@RequestParam Map<String, Part> map) {
             printLog(map);
             return Result.OK(new ArrayList<>(map.values()).get(0).getSubmittedFileName());
+        }
+
+        @RequestMapping(value = "/requestParamMultiValueMapStringTrimWithRequestParamAnnotation", method = RequestMethod.GET)
+        public Result<?> requestParamMultiValueMapStringTrimWithRequestParamAnnotation(
+                @RequestParam MultiValueMap<String, String> map) {
+            printLog(map);
+            return Result.OK(map);
         }
 
         @SuppressWarnings("unchecked")
