@@ -3,7 +3,7 @@ package org.suda.common;
 import java.io.Serializable;
 
 /**
- * 返回值的包装类
+ * 请求响应数据包装类
  * @author chengshaozhuang
  */
 public class Result<T> implements Serializable {
