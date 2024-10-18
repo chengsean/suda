@@ -63,7 +63,7 @@ public class Account implements java.io.Serializable {
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", birthday='" + birthday.toString() +'\''+
+                ", birthday=" + birthday +
                 '}';
     }
 }
