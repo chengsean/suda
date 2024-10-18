@@ -28,17 +28,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * {@link SecurityRequestParamMethodArgumentResolver}请求接口对应的方法参数解析器单元测试
  * @author chengshaozhuang
  */
 @SpringBootTest(classes = {
-        SecurityRequestParamMethodArgumentResolverTests
-                .SecurityRequestParamMethodArgumentResolverTestController.class,
+        SecurityRequestParamMethodArgumentResolverTests.TestController.class,
         ArgumentResolverConfiguration.class,
         MockMvcAutoConfiguration.class})
 class SecurityRequestParamMethodArgumentResolverTests {
@@ -70,7 +69,8 @@ class SecurityRequestParamMethodArgumentResolverTests {
     }
 
     private void testRequestParamStringTrim(String url) throws Exception {
-        mockMvc.perform(get(url).param(NAME_KEY, NAME_VALUE)).andExpect(jsonPath("$.data").value(NAME_VALUE.trim()));
+        mockMvc.perform(get(url).param(NAME_KEY, NAME_VALUE)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(NAME_VALUE.trim()));
     }
 
     @Test
@@ -79,7 +79,8 @@ class SecurityRequestParamMethodArgumentResolverTests {
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamStringTrimWithRequestParamAnnotationWithName";
         final int id = 1024;
         mockMvc.perform(get(url).param(NAME_KEY, NAME_VALUE)
-                .param(ID_KEY, Objects.toString(id))).andExpect(jsonPath("$.data.name").value(NAME_VALUE.trim()))
+                .param(ID_KEY, Objects.toString(id))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value(NAME_VALUE.trim()))
                 .andExpect(jsonPath("$.data.id").value(id));
     }
 
@@ -88,7 +89,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
         // 测试接口有'RequestParam'注解的'Collection<String>'参数去空格是否有效
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamCollectionStringTrimWithRequestParamAnnotationWithName";
         final String value2 = " gengshao  ";
-        mockMvc.perform(get(url).param(COLL_NAME, NAME_VALUE, value2))
+        mockMvc.perform(get(url).param(COLL_NAME, NAME_VALUE, value2)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0]").value(NAME_VALUE.trim()))
                 .andExpect(jsonPath("$.data[1]").value(value2.trim()));
     }
@@ -120,7 +121,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
         String filename = secureFile;
         MockPart mockPart = createMockPart(filename, MULTIPART_FILE_PARAM_NAME);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultipartFileCheckWithoutRequestParamAnnotation";
-        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart))
+        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(filename));
     }
 
@@ -150,7 +151,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
         String filename = secureFile;
         MockPart mockPart = createMockPart(filename, PART_PARAM_NAME);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamPartCheckWithoutRequestParamAnnotation";
-        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart))
+        this.mockMvc.perform(MockMvcRequestBuilders.multipart(url).part(mockPart)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(filename));
     }
 
@@ -185,7 +186,7 @@ class SecurityRequestParamMethodArgumentResolverTests {
 
     @RestController
     @RequestMapping(Constant.PREFIX_SERVLET_PATH)
-    static class SecurityRequestParamMethodArgumentResolverTestController {
+    static class TestController {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
 

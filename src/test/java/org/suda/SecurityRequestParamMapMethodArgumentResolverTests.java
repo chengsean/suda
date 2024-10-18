@@ -28,17 +28,16 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * {@link SecurityRequestParamMapMethodArgumentResolver}请求接口对应的方法参数解析器单元测试
  * @author chengshaozhuang
  */
 @SpringBootTest(classes = {
-        SecurityRequestParamMapMethodArgumentResolverTests
-                .SecurityRequestParamMapMethodArgumentResolverTestController.class,
+        SecurityRequestParamMapMethodArgumentResolverTests.TestController.class,
         ArgumentResolverConfiguration.class,
         MockMvcAutoConfiguration.class})
 class SecurityRequestParamMapMethodArgumentResolverTests {
@@ -57,7 +56,7 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
     void testRequestParamMapStringTrimWithRequestParamAnnotation() throws Exception {
         // 测试接口有'RequestParam'注解的'Map<String,String>'参数去空格是否有效
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapStringTrimWithRequestParamAnnotation";
-        mockMvc.perform(get(url).param(nameKey, nameValue))
+        mockMvc.perform(get(url).param(nameKey, nameValue)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.name").value(nameValue.trim()));
     }
 
@@ -84,7 +83,8 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         // 测试上传文件成功
         MockPart mockPart = createMockPart(secureFile, multipartFileParamName);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapMultipartFileCheckWithRequestParamAnnotation";
-        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(secureFile));
     }
 
     @Test
@@ -110,14 +110,15 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         // 测试上传文件成功
         MockPart mockPart = createMockPart(secureFile, partParamName);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMapPartByRequestParamAnnotation";
-        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(secureFile));
     }
 
     @Test
     void testRequestParamMultiValueMapStringTrimWithRequestParamAnnotation() throws Exception {
         // 测试接口有'RequestParam'注解的'MultiValueMap<String,String>'参数去空格是否有效
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapStringTrimWithRequestParamAnnotation";
-        mockMvc.perform(get(url).param(nameKey, nameValue))
+        mockMvc.perform(get(url).param(nameKey, nameValue)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.name").value(nameValue.trim()));
     }
 
@@ -144,7 +145,8 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         // 测试上传文件成功
         MockPart mockPart = createMockPart(secureFile, multipartFileParamName);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapMultipartFileCheckWithRequestParamAnnotation";
-        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(secureFile));
     }
 
     @Test
@@ -170,7 +172,8 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
         // 测试上传文件成功
         MockPart mockPart = createMockPart(secureFile, partParamName);
         String url = Constant.PREFIX_SERVLET_PATH + "/requestParamMultiValueMapPartCheckWithRequestParamAnnotation";
-        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(jsonPath("$.data").value(secureFile));
+        this.mockMvc.perform(multipart(url).part(mockPart)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(secureFile));
     }
 
     private MockPart createMockPart(String filename, String paramName) throws ClassloaderUnavailableException, IOException {
@@ -204,7 +207,7 @@ class SecurityRequestParamMapMethodArgumentResolverTests {
 
     @RestController
     @RequestMapping(Constant.PREFIX_SERVLET_PATH)
-    static class SecurityRequestParamMapMethodArgumentResolverTestController {
+    static class TestController {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
