@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfig
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,13 @@ public class SecurityServletModelAttributeMethodProcessorTests {
         testModelAttributeStringTrim(url);
     }
 
+    @Test
+    void testModelAttributeStringTrimWithModelAttributeAnnotation() throws Exception {
+        // 测试接口有'ModelAttribute'注解包装对象的字符串参数去空格是否有效
+        String url = Constant.PREFIX_SERVLET_PATH + "/modelAttributeStringTrimWithModelAttributeAnnotation";
+        testModelAttributeStringTrim(url);
+    }
+
     private void testModelAttributeStringTrim(String url) throws Exception {
         Account account = new Account();
         account.setSn(1L);
@@ -74,6 +82,13 @@ public class SecurityServletModelAttributeMethodProcessorTests {
             printLog(account);
             return Result.OK(account);
         }
+
+        @RequestMapping(value = "/modelAttributeStringTrimWithModelAttributeAnnotation", method = RequestMethod.GET)
+        public Result<?> modelAttributeStringTrimWithModelAttributeAnnotation(@ModelAttribute Account account) {
+            printLog(account);
+            return Result.OK(account);
+        }
+
 
         private void printLog(Object obj) {
             if (obj == null) {
