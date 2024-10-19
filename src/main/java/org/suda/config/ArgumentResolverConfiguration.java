@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ContinuationHandler
 import org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor;
 import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.PathVariableMapMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.PrincipalMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RedirectAttributesMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestAttributeMethodArgumentResolver;
@@ -34,7 +35,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SessionAttributeMet
 import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
 import org.suda.SecurityMatrixVariableMethodArgumentResolver;
-import org.suda.SecurityPathVariableMapMethodArgumentResolver;
 import org.suda.SecurityPathVariableMethodArgumentResolver;
 import org.suda.SecurityRequestParamMapMethodArgumentResolver;
 import org.suda.SecurityRequestParamMethodArgumentResolver;
@@ -100,7 +100,9 @@ public class ArgumentResolverConfiguration {
                 fileMethodArgumentHandler));
         resolvers.add(new SecurityRequestParamMapMethodArgumentResolver(stringMethodArgumentHandler, fileMethodArgumentHandler));
         resolvers.add(new SecurityPathVariableMethodArgumentResolver(stringMethodArgumentHandler));
-        resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
+        resolvers.add(new PathVariableMapMethodArgumentResolver());
+        // 功能暂不支持(Not at this time)
+//        resolvers.add(new SecurityPathVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityMatrixVariableMapMethodArgumentResolver(stringMethodArgumentHandler));
         resolvers.add(new SecurityServletModelAttributeMethodProcessor(false, stringMethodArgumentHandler));
