@@ -40,7 +40,7 @@ class SecurityMatrixVariableMapMethodArgumentResolverTests {
     static final String _PEOPLE = " 8 billion  ";
 
     @Test
-    void testRequestParamStringTrimWithMatrixVariableAnnotation() throws Exception {
+    void testRequestParamMultiValueMapStringTrimWithMatrixVariableAnnotation() throws Exception {
         // 测试接口有'RequestParam'注解字符串参数去空格是否有效
         String url = Constant.PREFIX_SERVLET_PATH + "/population";
         mockMvc.perform(get(url +"/date/a;date={date}/area/b;area={area}/people/c;people={people}",
