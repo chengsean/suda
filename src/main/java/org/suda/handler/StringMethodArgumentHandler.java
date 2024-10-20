@@ -15,7 +15,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.util.AntPathMatcher;
 import org.suda.util.ServletRequestUtils;
 import org.suda.util.StringEscapeUtils;
-import org.suda.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyDescriptor;
@@ -44,35 +43,35 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
 
     @Override
     @Nullable
-    public Object securityChecks(@Nullable Object arg, @Nullable HttpServletRequest request, @Nullable MethodParameter parameter) {
-        return securityChecks0(arg, request, parameter);
+    public Object securityChecks(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
+        return securityChecks0(arg, Objects.requireNonNull(request), parameter);
     }
 
     @SuppressWarnings("unchecked")
-    private Object securityChecks0(Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
-        if (arg == null || request == null) {
+    private Object securityChecks0(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
+        if (arg == null) {
             return null;
         }
         String servletPath = ServletRequestUtils.getServletPath(request);
         if (arg instanceof String) {
-            return handleInjection4Str(arg.toString(), servletPath);
+            return securityCheck4SimpleString(arg.toString(), servletPath);
         }
         // String数组
         boolean isStringArray = String.class == arg.getClass().getComponentType() ||
                 parameter != null && String.class == parameter.getNestedParameterType().getComponentType();
         if (isStringArray) {
-            handleInjection4StrArray((String[])arg, servletPath);
+            securityCheck4StringArray((String[])arg, servletPath);
         }
         if (arg instanceof MultiValueMap) {
-            return handleInjection4MultiValueMap((MultiValueMap<Object, Object>) arg, servletPath);
+            return securityCheck4MultiValueMap((MultiValueMap<Object, Object>) arg, servletPath);
         }
         if (arg instanceof Map) {
-            return handleInjection4Map((Map<Object, Object>) arg, servletPath);
+            return securityCheck4Map((Map<Object, Object>) arg, servletPath);
         }
-        return handleSecurity4Object(arg, servletPath);
+        return securityCheck4Object(arg, servletPath);
     }
 
-    private Object handleInjection4MultiValueMap(MultiValueMap<Object, Object> map, String servletPath) {
+    private Object securityCheck4MultiValueMap(MultiValueMap<Object, Object> map, String servletPath) {
         for (Map.Entry<Object, List<Object>> entry : map.entrySet()) {
             List<Object> values = entry.getValue();
             if (values.isEmpty() || !(values.get(0) instanceof String)) {
@@ -86,21 +85,21 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
                 return map;
             }
             for (Object value : objects) {
-                map.add(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
+                map.add(entry.getKey(), securityCheck4SimpleString(value.toString(), servletPath));
             }
         }
         return map;
     }
 
-    private void handleInjection4StrArray(String[] strings, String servletPath) {
+    private void securityCheck4StringArray(String[] strings, String servletPath) {
         for (int i = 0; i < strings.length; i++) {
             String str = strings[i];
-            Object obj = handleInjection4Str(str, servletPath);
+            Object obj = securityCheck4SimpleString(str, servletPath);
             strings[i] = Objects.toString(obj, null);
         }
     }
 
-    private Object handleSecurity4Object(Object arg, String servletPath) {
+    private Object securityCheck4Object(Object arg, String servletPath) {
         PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(arg.getClass());
         for (PropertyDescriptor pd : propertyDescriptors) {
             Method readMethod = pd.getReadMethod();
@@ -113,7 +112,7 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
                 boolean isStringType = returnType.isAssignableFrom(String.class);
                 if (isStringType) {
                     String value = Objects.toString(readMethod.invoke(arg), null);
-                    writeMethod.invoke(arg, handleInjection4Str(value, servletPath));
+                    writeMethod.invoke(arg, securityCheck4SimpleString(value, servletPath));
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
                 logger.warn("Opos!! Calling the '{}' method encountered an unexpected exception.", writeMethod.getName(), e);
@@ -122,12 +121,12 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         return arg;
     }
 
-    private Map<Object, Object> handleInjection4Map(Map<Object, Object> map, String servletPath) {
+    private Map<Object, Object> securityCheck4Map(Map<Object, Object> map, String servletPath) {
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
             if (value instanceof String) {
                 try {
-                    map.put(entry.getKey(), handleInjection4Str(value.toString(), servletPath));
+                    map.put(entry.getKey(), securityCheck4SimpleString(value.toString(), servletPath));
                 } catch (UnsupportedOperationException e) {
                     logger.warn("The map '{}' cannot be modified.", map.getClass().getName(), e);
                    // return value when can not edit this map
@@ -138,74 +137,71 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
         return map;
     }
 
-    private Object handleInjection4Str(String str, String servletPath) {
-        if (str == null) {
+    private Object securityCheck4SimpleString(String arg, String servletPath) {
+        if (arg == null) {
             return null;
         }
-        if (enabledSqlInjection(servletPath)) {
-            str = handleSQLInjection(str);
+        if (enabledSqlInjectionSecurityCheck(servletPath)) {
+            arg = checkSQLInjection(arg);
         }
-        if (enabledXxsInjection(servletPath)) {
-            str = handleXSSInjection(str);
+        if (enabledXxsInjectionSecurityCheck(servletPath)) {
+            arg = checkXSSInjection(arg);
         }
-        return properties.getChars().isTrimEnabled() ? str.trim() : str;
+        return properties.getChars().isTrimEnabled() ? arg.trim() : arg;
     }
 
-    private boolean enabledXxsInjection(String servletPath) {
-        return properties.getXssAttack().isCheckEnabled() && !inXssWhitelist(servletPath);
+    private boolean enabledXxsInjectionSecurityCheck(String servletPath) {
+        return properties.getXssAttack().isCheckEnabled() &&
+                isNotOnWhitelist(properties.getXssAttack().getServletPathWhitelist(), servletPath);
     }
 
-    private boolean enabledSqlInjection(String servletPath) {
-        return properties.getSqlInject().isCheckEnabled() && !inSqlInjectWhitelist(servletPath);
+    private boolean enabledSqlInjectionSecurityCheck(String servletPath) {
+        return properties.getSqlInject().isCheckEnabled() &&
+                isNotOnWhitelist(properties.getSqlInject().getServletPathWhitelist(), servletPath);
     }
 
-    private boolean inSqlInjectWhitelist(String servletPath) {
-        return properties.getSqlInject().getServletPathWhitelist().contains(servletPath);
-    }
-
-    protected String handleSQLInjection(String str) {
-        if (str == null) {
+    protected String checkSQLInjection(String arg) {
+        if (arg == null) {
             return null;
         }
         String[] sqlKeywordList = properties.getSqlInject().getSqlKeywordList();
         for (String keyword : sqlKeywordList) {
-            if (str.contains(keyword)) {
-                logger.warn("检测到入参：'{}'有安全风险问题！", str);
-                throw new SQLKeyboardDetectedException("检测到入参：'"+str+"'有安全风险问题！");
+            if (arg.contains(keyword)) {
+                logger.warn("Parameter: '{}' is detected to contain an SQL keyword！", arg);
+                throw new SQLKeyboardDetectedException("Parameter: '"+arg+"' is detected to contain an SQL keyword！");
             }
         }
-        return str;
+        return arg;
     }
 
-    protected String handleXSSInjection(String str) {
-        return escapeHtml(str);
+    protected String checkXSSInjection(String arg) {
+        return escapeHtml(arg);
     }
 
-    private String escapeHtml(String str) {
-        if (str == null) {
+    private String escapeHtml(String arg) {
+        if (arg == null) {
             return null;
         }
         String[] xssRegexList = properties.getXssAttack().getXssRegexList();
         for (String regex : xssRegexList) {
-            if (str.matches(regex)) {
-                return StringEscapeUtils.escapeHtml4(str);
+            if (arg.matches(regex)) {
+                return StringEscapeUtils.escapeHtml4(arg);
             }
         }
-        return str;
+        return arg;
     }
 
-    private boolean inXssWhitelist(String servletPath) {
-        if (StringUtils.isBlank(servletPath)) {
-            throw new IllegalArgumentException("请求路径不能为空");
+    private boolean isNotOnWhitelist(List<String> servletPathWhitelist, String servletPath) {
+        if (servletPathWhitelist == null) {
+            return true;
         }
         AntPathMatcher matcher = new AntPathMatcher();
-        String[] xssRegexList = properties.getXssAttack().getXssRegexList();
-        for (String url : xssRegexList) {
+        for (String url : servletPathWhitelist) {
             boolean match = Objects.nonNull(url) && matcher.match(url, servletPath);
             if (match) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
