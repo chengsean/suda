@@ -13,5 +13,5 @@ public interface MethodArgumentHandler {
 
 
     @Nullable
-    Object securityChecks(@Nullable Object arg, @Nullable HttpServletRequest request, @Nullable MethodParameter parameter);
+    Object securityChecks(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter);
 }
