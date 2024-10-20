@@ -10,7 +10,7 @@ suda:
    xss-attack:
      check-enabled: true
      servlet-path-whitelist: '/foo,/bar,/example'
-     xss-regex-list: '[\\S\\s\\t\\r\\n]*<[\\S\\s\\t\\r\\n]+(/)?>[\\S\\s\\t\\r\\n]*, [\\S\\s\\t\\r\\n]*<[\\S\\s\\t\\r\\n]+>[\\S\\s\\t\\r\\n]+</[\\S\\s\\t\\r\\n]+>[\\S\\s\\t\\r\\n]*'
+     xss-regex-list: '[\S\s\t\r\n]*<[\S\s\t\r\n]+(/)?>[\S\s\t\r\n]*, [\S\s\t\r\n]*<[\S\s\t\r\n]+>[\S\s\t\r\n]+</[\S\s\t\r\n]+>[\S\s\t\r\n]*'
    sql-inject:
      check-enabled: true
      servlet-path-whitelist: '/foo,/bar,/example'
