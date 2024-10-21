@@ -1,8 +1,10 @@
 package org.suda.util;
 
 import org.springframework.lang.NonNull;
+import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,8 +15,21 @@ import java.util.Objects;
 public abstract class ServletRequestUtils {
 
     public static String getServletPath(@NonNull HttpServletRequest request) {
-        Objects.requireNonNull(request);
-        String servletPath = request.getServletPath();
+        String servletPath = Objects.requireNonNull(request).getServletPath();
         return StringUtils.isNotBlank(servletPath) ? servletPath : request.getRequestURI();
+    }
+
+    public static boolean isNotOnWhitelist(List<String> servletPathWhitelist, String servletPath) {
+        if (servletPathWhitelist == null || servletPath == null) {
+            return true;
+        }
+        AntPathMatcher matcher = new AntPathMatcher();
+        for (String url : servletPathWhitelist) {
+            boolean match = Objects.nonNull(url) && matcher.match(url, servletPath);
+            if (match) {
+                return false;
+            }
+        }
+        return true;
     }
 }

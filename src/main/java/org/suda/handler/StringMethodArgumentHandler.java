@@ -12,7 +12,6 @@ import org.suda.config.SudaProperties;
 import org.suda.exception.SQLKeyboardDetectedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
-import org.springframework.util.AntPathMatcher;
 import org.suda.util.ServletRequestUtils;
 import org.suda.util.StringEscapeUtils;
 
@@ -153,12 +152,12 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
 
     private boolean enabledXxsInjectionSecurityCheck(String servletPath) {
         return properties.getXssAttack().isCheckEnabled() &&
-                isNotOnWhitelist(properties.getXssAttack().getServletPathWhitelist(), servletPath);
+                ServletRequestUtils.isNotOnWhitelist(properties.getXssAttack().getServletPathWhitelist(), servletPath);
     }
 
     private boolean enabledSqlInjectionSecurityCheck(String servletPath) {
         return properties.getSqlInject().isCheckEnabled() &&
-                isNotOnWhitelist(properties.getSqlInject().getServletPathWhitelist(), servletPath);
+                ServletRequestUtils.isNotOnWhitelist(properties.getSqlInject().getServletPathWhitelist(), servletPath);
     }
 
     protected String checkSQLInjection(String arg) {
@@ -190,19 +189,5 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
             }
         }
         return arg;
-    }
-
-    private boolean isNotOnWhitelist(List<String> servletPathWhitelist, String servletPath) {
-        if (servletPathWhitelist == null) {
-            return true;
-        }
-        AntPathMatcher matcher = new AntPathMatcher();
-        for (String url : servletPathWhitelist) {
-            boolean match = Objects.nonNull(url) && matcher.match(url, servletPath);
-            if (match) {
-                return false;
-            }
-        }
-        return true;
     }
 }
