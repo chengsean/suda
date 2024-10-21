@@ -44,7 +44,8 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     @Override
     @Nullable
     public Object securityChecks(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
-        return securityChecks0(arg, Objects.requireNonNull(request), parameter);
+        String message = "Instance of ttpServletRequest can't be null";
+        return securityChecks0(arg, Objects.requireNonNull(request, message), parameter);
     }
 
     @SuppressWarnings("unchecked")
