@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 文件类型参数安全检查
@@ -36,47 +37,61 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
 
     @Override
     @Nullable
-    public Object securityChecks(@Nullable Object arg, @Nullable HttpServletRequest request, MethodParameter parameter) {
-        return securityChecks0(arg, request, parameter);
+    public Object securityChecks(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
+        String message = "Instance of ttpServletRequest can't be null";
+        return securityChecks0(arg, Objects.requireNonNull(request, message), parameter);
     }
 
-
     @SuppressWarnings({"unchecked","rawtypes"})
-    private Object securityChecks0(Object arg, HttpServletRequest request, MethodParameter parameter) {
-        if (arg == null || request == null) {
+    private Object securityChecks0(@Nullable Object arg, HttpServletRequest request, @Nullable MethodParameter parameter) {
+        if (arg == null) {
             return null;
         }
         String servletPath = ServletRequestUtils.getServletPath(request);
         if (!fileSecurityChecksEnabled(servletPath)) {
             return arg;
         }
-        if (MultipartFile.class == parameter.getNestedParameterType()) {
+        if (arg instanceof MultipartFile) {
             checkFileType((MultipartFile) arg);
         }
-        else if (isMultipartFileCollection(parameter)) {
+        else if (isMultipartFileCollection(parameter, arg)) {
             Collection<MultipartFile> files = (Collection<MultipartFile>) arg;
             checkFileType(files.toArray(new MultipartFile[0]));
         }
-        else if (isMultipartFileArray(parameter)) {
+        else if (isMultipartFileArray(parameter, arg)) {
             checkFileType((MultipartFile[]) arg);
         }
-        else if (Part.class == parameter.getNestedParameterType()) {
+        else if (arg instanceof Part) {
             checkFileType((Part) arg);
         }
-        else if (isPartCollection(parameter)) {
+        else if (isPartCollection(parameter, arg)) {
             Collection<Part> parts = (Collection<Part>) arg;
             checkFileType(parts.toArray(new Part[0]));
         }
-        else if (isPartArray(parameter)) {
+        else if (isPartArray(parameter, arg)) {
             checkFileType((Part[]) arg);
         }
-        else if (MultiValueMap.class.isAssignableFrom(parameter.getParameterType())) {
+        else if (isMultiValueMap(parameter, arg)) {
             ((MultiValueMap)arg).values().forEach(object -> checkFileType(((List<Object>) object).toArray()));
         }
-        else if (Map.class.isAssignableFrom(parameter.getParameterType())) {
+        else if (isMap(parameter, arg)) {
             checkFileType(((Map)arg).values().toArray());
         }
         return arg;
+    }
+
+    private boolean isMap(MethodParameter parameter, Object arg) {
+        if (parameter != null) {
+            return Map.class.isAssignableFrom(parameter.getParameterType());
+        }
+        return Map.class.isAssignableFrom(arg.getClass());
+    }
+
+    private boolean isMultiValueMap(MethodParameter parameter, Object arg) {
+        if (parameter != null) {
+            return MultiValueMap.class.isAssignableFrom(parameter.getParameterType());
+        }
+        return MultiValueMap.class.isAssignableFrom(arg.getClass());
     }
 
     private void checkFileType(Object... objects) {
@@ -97,7 +112,7 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
             }
             String filename = part.getSubmittedFileName();
             try {
-                // 检查文件的真实类型
+                // 文件安全检查
                 tikaWrapper.checkFileType(filename, part.getInputStream());
             } catch (IOException e) {
                 if (logger.isWarnEnabled()) {
@@ -126,23 +141,35 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
     private boolean fileSecurityChecksEnabled(String servletPath) {
         List<String> servletPathWhitelist = properties.getFiles().getServletPathWhitelist();
         boolean fileCheckEnabled = properties.getFiles().isCheckEnabled();
-        return fileCheckEnabled && !servletPathWhitelist.contains(servletPath);
+        return fileCheckEnabled && ServletRequestUtils.isNotOnWhitelist(servletPathWhitelist, servletPath);
     }
 
-    private boolean isMultipartFileCollection(MethodParameter methodParam) {
-        return (MultipartFile.class == getCollectionParameterType(methodParam));
+    private boolean isMultipartFileCollection(MethodParameter methodParam, Object arg) {
+        if (methodParam != null) {
+            return MultipartFile.class == getCollectionParameterType(methodParam);
+        }
+        return MultipartFile.class.isAssignableFrom(arg.getClass());
     }
 
-    private boolean isMultipartFileArray(MethodParameter methodParam) {
-        return (MultipartFile.class == methodParam.getNestedParameterType().getComponentType());
+    private boolean isMultipartFileArray(MethodParameter methodParam, Object arg) {
+        if (methodParam != null) {
+            return (MultipartFile.class == methodParam.getNestedParameterType().getComponentType());
+        }
+        return MultipartFile.class.isAssignableFrom(arg.getClass());
     }
 
-    private boolean isPartCollection(MethodParameter methodParam) {
-        return (Part.class == getCollectionParameterType(methodParam));
+    private boolean isPartCollection(MethodParameter methodParam, Object arg) {
+        if (methodParam != null) {
+            return (Part.class == getCollectionParameterType(methodParam));
+        }
+        return Part.class.isAssignableFrom(arg.getClass());
     }
 
-    private boolean isPartArray(MethodParameter methodParam) {
-        return (Part.class == methodParam.getNestedParameterType().getComponentType());
+    private boolean isPartArray(MethodParameter methodParam, Object arg) {
+        if (methodParam != null) {
+            return (Part.class == methodParam.getNestedParameterType().getComponentType());
+        }
+        return Part.class.isAssignableFrom(arg.getClass());
     }
 
     @Nullable
