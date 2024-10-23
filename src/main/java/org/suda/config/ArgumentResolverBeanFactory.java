@@ -24,7 +24,7 @@ public class ArgumentResolverBeanFactory implements BeanFactoryAware {
      * 获取 BeanFactory
      * @return org.springframework.beans.factory.BeanFactory
      */
-    public BeanFactory getInstance() {
+    protected BeanFactory getInstance() {
         return beanFactory;
     }
 }
