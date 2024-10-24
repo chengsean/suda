@@ -33,14 +33,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletRequestMetho
 import org.springframework.web.servlet.mvc.method.annotation.ServletResponseMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.SessionAttributeMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.UriComponentsBuilderMethodArgumentResolver;
-import org.suda.SecurityMatrixVariableMapMethodArgumentResolver;
-import org.suda.SecurityMatrixVariableMethodArgumentResolver;
-import org.suda.SecurityPathVariableMethodArgumentResolver;
-import org.suda.SecurityRequestParamMapMethodArgumentResolver;
-import org.suda.SecurityRequestParamMethodArgumentResolver;
-import org.suda.SecurityRequestPartMethodArgumentResolver;
-import org.suda.SecurityRequestResponseBodyMethodProcessor;
-import org.suda.SecurityServletModelAttributeMethodProcessor;
+import org.suda.resolver.SecurityMatrixVariableMapMethodArgumentResolver;
+import org.suda.resolver.SecurityMatrixVariableMethodArgumentResolver;
+import org.suda.resolver.SecurityPathVariableMethodArgumentResolver;
+import org.suda.resolver.SecurityRequestParamMapMethodArgumentResolver;
+import org.suda.resolver.SecurityRequestParamMethodArgumentResolver;
+import org.suda.resolver.SecurityRequestPartMethodArgumentResolver;
+import org.suda.resolver.SecurityRequestResponseBodyMethodProcessor;
+import org.suda.resolver.SecurityServletModelAttributeMethodProcessor;
 import org.suda.handler.MethodArgumentHandler;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ import java.util.List;
  * @dateTime 2023-08-06 01:41
  */
 @Configuration
-@Import({WebMvcAutoConfiguration.class, ArgumentResolverBeanFactoryConfiguration.class, ArgumentHandlerConfiguration.class})
+@Import({WebMvcAutoConfiguration.class, ArgumentHandlerConfiguration.class, ArgumentResolverBeanFactoryConfiguration.class})
 public class ArgumentResolverConfiguration {
 
     /**
@@ -161,5 +161,4 @@ public class ArgumentResolverConfiguration {
         logger.warn("instance of '"+ConfigurableBeanFactory.class.getName()+"' not found!");
         return null;
     }
-
 }

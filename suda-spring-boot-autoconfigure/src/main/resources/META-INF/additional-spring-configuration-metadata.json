@@ -1,65 +1,65 @@
 {
   "properties": [
     {
-      "name": "suda.security.chars.trim-enabled",
+      "name": "suda.io-security.chars.trim-enabled",
       "type": "java.lang.Boolean",
       "defaultValue": true,
       "sourceType": "org.suda.config.SudaProperties$Chars",
       "description": "是否对字符串去空格."
     },
     {
-      "name": "suda.security.xss-attack.check-enabled",
+      "name": "suda.io-security.xss-attack.check-enabled",
       "type": "java.lang.Boolean",
       "defaultValue": false,
       "sourceType": "org.suda.config.SudaProperties$XSSAttack",
       "description": "是否启用XSS攻击检查，默认不启用."
     },
     {
-      "name": "suda.security.xss-attack.servlet-path-whitelist",
+      "name": "suda.io-security.xss-attack.servlet-path-whitelist",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$XSSAttack",
       "description": "配置XSS攻击检查的接口白名单."
     },
     {
-      "name": "suda.security.xss-attack.xss-regex-list",
+      "name": "suda.io-security.xss-attack.xss-regex-list",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$XSSAttack",
       "description": "配置检查XSS攻击的正则表达式."
     },
     {
-      "name": "suda.security.sql-inject.check-enabled",
+      "name": "suda.io-security.sql-inject.check-enabled",
       "type": "java.lang.Boolean",
       "defaultValue": false,
       "sourceType": "org.suda.config.SudaProperties$SQLInject",
       "description": "是否启用SQL注入攻击检查，默认不启用."
     },
     {
-      "name": "suda.security.sql-inject.servlet-path-whitelist",
+      "name": "suda.io-security.sql-inject.servlet-path-whitelist",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$SQLInject",
       "description": "配置SQL注入攻击检查接口白名单."
     },
     {
-      "name": "suda.security.sql-inject.sql-keyword-list",
+      "name": "suda.io-security.sql-inject.sql-keyword-list",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$SQLInject",
       "description": "配置检查SQL注入攻击的关键字."
     },
     {
-      "name": "suda.security.files.check-enabled",
+      "name": "suda.io-security.files.check-enabled",
       "type": "java.lang.Boolean",
       "defaultValue": false,
       "sourceType": "org.suda.config.SudaProperties$Files",
       "description": "是否启用文件安全检查，包括：文件扩展名黑名单、文件扩展名被篡改等。默认不启用."
     },
     {
-      "name": "suda.security.files.servlet-path-whitelist",
+      "name": "suda.io-security.files.servlet-path-whitelist",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$Files",
       "description": "配置文件安全检查接口白名单."
     },
     {
-      "name": "suda.security.files.extension-blacklist",
+      "name": "suda.io-security.files.extension-blacklist",
       "type": "java.util.List<java.lang.String>",
       "sourceType": "org.suda.config.SudaProperties$Files",
       "description": "配置文件扩展名黑名单."

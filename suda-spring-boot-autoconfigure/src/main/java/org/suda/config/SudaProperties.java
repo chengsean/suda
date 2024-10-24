@@ -1,15 +1,18 @@
 package org.suda.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.suda.handler.ArgumentHandlerProperties;
+import org.suda.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 安全配置
+ * 参数安全检查自动配置，与{@link ArgumentHandlerProperties}是姐妹类
  * @author chengshaozhuang
  * @dateTime 2024-09-02 13:18
  */
-@ConfigurationProperties(prefix = "suda.security")
+@ConfigurationProperties(prefix = "suda.io-security")
 public class SudaProperties {
 
     private final XSSAttack xssAttack = new XSSAttack();
@@ -169,17 +172,8 @@ public class SudaProperties {
         }
 
         public void setExtensionBlacklist(String[] extensionBlacklist) {
-            this.extensionBlacklist = appendDotIfNecessary(extensionBlacklist);
+            this.extensionBlacklist = StringUtils.appendDotIfNecessary(extensionBlacklist);
             this.customized = true;
-        }
-
-        private String[] appendDotIfNecessary(String[] extensionBlacklist) {
-            String[] normalized = new String[extensionBlacklist.length];
-            for (int i = 0; i < extensionBlacklist.length; i++) {
-                String extension = extensionBlacklist[i];
-                normalized[i] = extension.startsWith(".") ? extension : "." + extension;
-            }
-            return normalized;
         }
 
         public boolean hasBeenCustomized() {
