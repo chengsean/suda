@@ -1,4 +1,4 @@
-package org.suda;
+package org.suda.resolver;
 
 import org.suda.handler.MethodArgumentHandler;
 import org.springframework.web.bind.WebDataBinder;

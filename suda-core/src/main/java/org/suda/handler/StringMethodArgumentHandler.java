@@ -8,11 +8,10 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.suda.config.SudaProperties;
 import org.suda.exception.SQLKeyboardDetectedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
-import org.suda.util.ServletRequestUtils;
+import org.suda.handler.util.ServletRequestUtils;
 import org.suda.util.StringEscapeUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +33,9 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final SudaProperties properties;
+    private final ArgumentHandlerProperties properties;
 
-    public StringMethodArgumentHandler(SudaProperties properties) {
+    public StringMethodArgumentHandler(ArgumentHandlerProperties properties) {
         this.properties = properties;
     }
 
@@ -161,10 +160,10 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     protected String checkSQLInjection(String arg) {
-        if (arg == null) {
+        String[] sqlKeywordList = properties.getSqlInject().getSqlKeywordList();
+        if (arg == null || sqlKeywordList == null) {
             return null;
         }
-        String[] sqlKeywordList = properties.getSqlInject().getSqlKeywordList();
         for (String keyword : sqlKeywordList) {
             if (arg.contains(keyword)) {
                 logger.warn("Parameter: '{}' is detected to contain an SQL keyword！", arg);
@@ -179,15 +178,19 @@ public class StringMethodArgumentHandler implements MethodArgumentHandler {
     }
 
     private String escapeHtml(String arg) {
-        if (arg == null) {
+        String[] xssRegexList = properties.getXssAttack().getXssRegexList();
+        if (arg == null || xssRegexList == null) {
             return null;
         }
-        String[] xssRegexList = properties.getXssAttack().getXssRegexList();
         for (String regex : xssRegexList) {
             if (arg.matches(regex)) {
                 return StringEscapeUtils.escapeHtml4(arg);
             }
         }
         return arg;
+    }
+
+    public ArgumentHandlerProperties getProperties() {
+        return properties;
     }
 }

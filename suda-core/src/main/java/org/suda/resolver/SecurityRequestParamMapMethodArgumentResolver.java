@@ -1,4 +1,4 @@
-package org.suda;
+package org.suda.resolver;
 
 import org.springframework.core.ResolvableType;
 import org.springframework.util.MultiValueMap;

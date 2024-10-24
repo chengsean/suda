@@ -1,4 +1,4 @@
-package org.suda;
+package org.suda.resolver;
 
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.suda.handler.MethodArgumentHandler;

@@ -1,4 +1,4 @@
-package org.suda;
+package org.suda.resolver;
 
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.support.MultipartResolutionDelegate;

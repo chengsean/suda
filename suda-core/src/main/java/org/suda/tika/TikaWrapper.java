@@ -1,4 +1,4 @@
-package org.suda.util;
+package org.suda.tika;
 
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.io.TikaInputStream;
@@ -8,9 +8,10 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypes;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.suda.config.SudaProperties;
 import org.suda.exception.DangerousFileTypeException;
 import org.suda.exception.IllegalFileTypeException;
+import org.suda.handler.ArgumentHandlerProperties;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -24,10 +25,10 @@ import java.util.Optional;
  */
 public class TikaWrapper {
     private final Metadata metadata;
-    private final SudaProperties properties;
+    private final ArgumentHandlerProperties properties;
     private final TikaConfig tikaConfig;
 
-    public TikaWrapper(@NonNull TikaConfig tikaConfig, @NonNull Metadata metadata, @NonNull SudaProperties properties) {
+    public TikaWrapper(@NonNull TikaConfig tikaConfig, @NonNull Metadata metadata, @NonNull ArgumentHandlerProperties properties) {
         this.metadata = metadata;
         this.properties = properties;
         this.tikaConfig = tikaConfig;

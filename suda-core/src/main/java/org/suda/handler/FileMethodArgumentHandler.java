@@ -3,13 +3,12 @@ package org.suda.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
-import org.suda.config.SudaProperties;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
-import org.suda.util.ServletRequestUtils;
-import org.suda.util.TikaWrapper;
+import org.suda.handler.util.ServletRequestUtils;
+import org.suda.tika.TikaWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -26,14 +25,13 @@ import java.util.Objects;
  */
 public class FileMethodArgumentHandler implements MethodArgumentHandler {
     protected final Logger logger = LoggerFactory.getLogger(FileMethodArgumentHandler.class);
-    private final SudaProperties properties;
+    private final ArgumentHandlerProperties properties;
     private final TikaWrapper tikaWrapper;
 
-    public FileMethodArgumentHandler(SudaProperties properties, TikaWrapper tikaWrapper) {
+    public FileMethodArgumentHandler(ArgumentHandlerProperties properties, TikaWrapper tikaWrapper) {
         this.properties = properties;
         this.tikaWrapper = tikaWrapper;
     }
-
 
     @Override
     @Nullable
@@ -179,5 +177,9 @@ public class FileMethodArgumentHandler implements MethodArgumentHandler {
             return ResolvableType.forMethodParameter(methodParam).asCollection().resolveGeneric();
         }
         return null;
+    }
+
+    public ArgumentHandlerProperties getProperties() {
+        return properties;
     }
 }

@@ -1,4 +1,4 @@
-package org.suda;
+package org.suda.resolver;
 
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestBody;
