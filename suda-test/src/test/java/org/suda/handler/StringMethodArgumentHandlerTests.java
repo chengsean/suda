@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.suda.config.ArgumentHandlerConfiguration;
-import org.suda.config.SudaProperties;
 import org.suda.exception.SQLKeyboardDetectedException;
 
 import javax.annotation.Resource;
@@ -16,7 +15,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * 字符串安全检查单元测试
+ * 字符串安全检查单元测试{@link StringMethodArgumentHandler}
  * @author chengshaozhuang
 */
 @SpringBootTest(classes = {ArgumentHandlerConfiguration.class})
@@ -30,25 +29,27 @@ class StringMethodArgumentHandlerTests {
     @Resource
     private MethodArgumentHandler stringMethodArgumentHandler;
 
-    @Resource
-    private SudaProperties properties;
-
     private HttpServletRequest request;
 
     @Test
     void testXSSAttacksCheckEnabled() {
         // 测试XSS攻击的安全检查的启用状态
-        properties.getXssAttack().setCheckEnabled(true);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object value = stringMethodArgumentHandler.securityChecks(comment, request, null);
         assertThat(value).isNotEqualTo(comment);
     }
 
+    private StringMethodArgumentHandler toStringMethodArgumentHandler() {
+        return ((StringMethodArgumentHandler) stringMethodArgumentHandler);
+    }
+
     @Test
     void testXSSAttacksCheckDisabled1() {
         // 测试XSS攻击的安全检查的禁用状态 1
-        properties.getXssAttack().setCheckEnabled(false);
-        properties.getXssAttack().setServletPathWhitelist(new ArrayList<>(Collections.singleton(uriWhitelist)));
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(false);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setServletPathWhitelist(
+                new ArrayList<>(Collections.singleton(uriWhitelist)));
         request = new MockHttpServletRequest(null, uriWhitelist);
         Object value = stringMethodArgumentHandler.securityChecks(comment, request, null);
         assertThat(value).isEqualTo(comment);
@@ -57,7 +58,7 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testXSSAttacksCheckDisabled2() {
         // 测试XSS攻击的安全检查的禁用状态 2
-        properties.getXssAttack().setCheckEnabled(false);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uri);
         Object value = stringMethodArgumentHandler.securityChecks(comment, request, null);
         assertThat(value).isEqualTo(comment);
@@ -66,7 +67,7 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testSQLInjectionAttacksCheckDisabled1() {
         // 测试SQL注入攻击的安全检查的启用状态
-        properties.getSqlInject().setCheckEnabled(false);
+        toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uri);
         Object value = stringMethodArgumentHandler.securityChecks(nickname, request, null);
         assertThat(value).isEqualTo(nickname);
@@ -75,9 +76,10 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testSQLInjectionAttacksCheckDisabled2() {
         // 测试SQL注入攻击的安全检查的启用状态
-        properties.getSqlInject().setCheckEnabled(false);
+        toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uriWhitelist);
-        properties.getSqlInject().setServletPathWhitelist(new ArrayList<>(Collections.singleton(uriWhitelist)));
+        toStringMethodArgumentHandler().getProperties().getSqlInject().setServletPathWhitelist(
+                new ArrayList<>(Collections.singleton(uriWhitelist)));
         Object value = stringMethodArgumentHandler.securityChecks(nickname, request, null);
         assertThat(value).isEqualTo(nickname);
     }
@@ -85,8 +87,9 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testXSSAttacksCheckWithUriWhitelist() {
         // 测试白名单接口的XSS攻击的安全检查
-        properties.getXssAttack().setCheckEnabled(true);
-        properties.getXssAttack().setServletPathWhitelist(new ArrayList<>(Collections.singleton(uriWhitelist)));
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(true);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setServletPathWhitelist(
+                new ArrayList<>(Collections.singleton(uriWhitelist)));
         request = new MockHttpServletRequest(null, uriWhitelist);
         Object value = stringMethodArgumentHandler.securityChecks(comment, request, null);
         assertThat(value).isEqualTo(comment);
@@ -95,7 +98,7 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testXSSAttacksCheckWithoutUriWhitelist() {
         // 测试非白名单接口的XSS攻击的安全检查（转换实体字符）
-        properties.getXssAttack().setCheckEnabled(true);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object value = stringMethodArgumentHandler.securityChecks(comment, request, null);
         assertThat(value).isNotEqualTo(comment);
@@ -104,8 +107,9 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testSQLInjectionAttacksCheckWithUriWhitelist() {
         // 测试白名单接口的SQL注入攻击的安全检查
-        properties.getSqlInject().setCheckEnabled(true);
-        properties.getXssAttack().setServletPathWhitelist(new ArrayList<>(Collections.singleton(uriWhitelist)));
+        toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(true);
+        toStringMethodArgumentHandler().getProperties().getXssAttack().setServletPathWhitelist(
+                new ArrayList<>(Collections.singleton(uriWhitelist)));
         request = new MockHttpServletRequest(null, uriWhitelist);
         Object value = stringMethodArgumentHandler.securityChecks(nickname, request, null);
         assertThat(value).isEqualTo(nickname);
@@ -114,7 +118,7 @@ class StringMethodArgumentHandlerTests {
     @Test
     void testSQLInjectionAttacksCheckWithoutUriWhitelist() {
         // 测试非白名单接口的SQL注入攻击的安全检查
-        properties.getSqlInject().setCheckEnabled(true);
+        toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         assertThatThrownBy(()-> stringMethodArgumentHandler.securityChecks(
                 nickname, request, null)).isInstanceOf(SQLKeyboardDetectedException.class);

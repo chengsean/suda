@@ -17,6 +17,7 @@ import org.suda.common.Result;
 import org.suda.config.ArgumentResolverConfiguration;
 import org.suda.exception.DangerousFileTypeException;
 import org.suda.exception.IllegalFileTypeException;
+import org.suda.resolver.SecurityRequestPartMethodArgumentResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Part;

@@ -1,4 +1,4 @@
-package org.suda.common;
+package org.suda.util;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

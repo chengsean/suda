@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.suda.common.Account;
 import org.suda.common.Constant;
 import org.suda.common.Result;
-import org.suda.common.TestUtil;
+import org.suda.resolver.SecurityServletModelAttributeMethodProcessor;
+import org.suda.util.TestUtil;
 import org.suda.config.ArgumentResolverConfiguration;
 
 import javax.annotation.Resource;

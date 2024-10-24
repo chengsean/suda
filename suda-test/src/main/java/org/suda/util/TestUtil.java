@@ -1,4 +1,4 @@
-package org.suda.common;
+package org.suda.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

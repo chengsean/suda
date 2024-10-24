@@ -7,7 +7,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.suda.config.ArgumentHandlerConfiguration;
-import org.suda.config.SudaProperties;
 import org.suda.exception.DangerousFileTypeException;
 import org.suda.exception.IllegalFileTypeException;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * 文件安全检查单元测试
+ * 文件安全检查单元测试{@link FileMethodArgumentHandler}
  * @author chengshaozhuang
 */
 @SpringBootTest(classes = {ArgumentHandlerConfiguration.class})
@@ -38,27 +37,29 @@ class FileMethodArgumentHandlerTests {
     @Resource
     private MethodArgumentHandler fileMethodArgumentHandler;
 
-    @Resource
-    private SudaProperties properties;
-
     private HttpServletRequest request;
 
     @Test
     void testFileSecurityChecksWithUriWhitelist() throws ClassloaderUnavailableException, IOException {
         // MultipartFile: 测试文件安全检查的Uri白名单
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         String uriWhitelist = "/example";
-        properties.getFiles().setServletPathWhitelist(new ArrayList<>(Collections.singleton(uriWhitelist)));
+        toFileMethodArgumentHandler().getProperties().getFiles().setServletPathWhitelist(
+                new ArrayList<>(Collections.singleton(uriWhitelist)));
         request = new MockHttpServletRequest(null, uriWhitelist);
         Object obj = createMockPart(fakePdf, MULTIPART_FILE_PARAM_NAME);
         Object result = fileMethodArgumentHandler.securityChecks(obj, request, null);
         assertThat(obj).isEqualTo(result);
     }
 
+    private FileMethodArgumentHandler toFileMethodArgumentHandler() {
+        return ((FileMethodArgumentHandler) fileMethodArgumentHandler);
+    }
+
     @Test
     void testFileSecurityChecksDisabled() throws ClassloaderUnavailableException, IOException {
         // Part: 测试文件安全检查的禁用用状态
-        properties.getFiles().setCheckEnabled(false);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(fakePdf, PART_PARAM_NAME);
         Object result = fileMethodArgumentHandler.securityChecks(obj, request, null);
@@ -68,7 +69,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testMultipartFileCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
         // MultipartFile：测试上传篡改扩展名的文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(fakePdf, MULTIPART_FILE_PARAM_NAME);
         assertThatThrownBy(() -> fileMethodArgumentHandler.securityChecks(
@@ -78,7 +79,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testMultipartFileCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
         // MultipartFile：测试上传黑名单文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(blacklistFile, MULTIPART_FILE_PARAM_NAME);
         assertThatThrownBy(() -> fileMethodArgumentHandler.securityChecks(
@@ -88,7 +89,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testMultipartFileCheckSecureFile() throws ClassloaderUnavailableException, IOException {
         // MultipartFile：测试上传安全的文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(secureFile, MULTIPART_FILE_PARAM_NAME);
         Object result = fileMethodArgumentHandler.securityChecks(obj, request, null);
@@ -98,7 +99,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testPartCheckIllegalFileType() throws ClassloaderUnavailableException, IOException {
         // Part：测试上传篡改扩展名的文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(fakePdf, PART_PARAM_NAME);
         assertThatThrownBy(() -> fileMethodArgumentHandler.securityChecks(
@@ -108,7 +109,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testPartCheckBlacklistFile() throws ClassloaderUnavailableException, IOException {
         // Part：测试上传黑名单文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(blacklistFile, PART_PARAM_NAME);
         assertThatThrownBy(() -> fileMethodArgumentHandler.securityChecks(
@@ -118,7 +119,7 @@ class FileMethodArgumentHandlerTests {
     @Test
     void testPartCheckSecureFile() throws ClassloaderUnavailableException, IOException {
         // Part：测试上传安全的文件
-        properties.getFiles().setCheckEnabled(true);
+        toFileMethodArgumentHandler().getProperties().getFiles().setCheckEnabled(true);
         request = new MockHttpServletRequest(null, uri);
         Object obj = createMockPart(secureFile, PART_PARAM_NAME);
         Object result = fileMethodArgumentHandler.securityChecks(obj, request, null);
