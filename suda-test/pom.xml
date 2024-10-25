@@ -8,10 +8,6 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>suda-test</artifactId>
-    <version>1.0.0</version>
-    <name>suda-test</name>
-    <properties>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -8,10 +8,6 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>suda-common</artifactId>
-    <version>1.0.0</version>
-    <name>suda-common</name>
-    <properties>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.commons</groupId>

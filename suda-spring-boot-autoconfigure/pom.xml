@@ -8,10 +8,6 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>suda-spring-boot-autoconfigure</artifactId>
-    <version>1.0.0</version>
-    <name>suda-spring-boot-autoconfigure</name>
-    <properties>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
