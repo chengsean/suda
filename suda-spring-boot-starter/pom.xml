@@ -13,25 +13,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.suda</groupId>
             <artifactId>suda-common</artifactId>
             <version>${suda-core.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.suda</groupId>
             <artifactId>suda-core</artifactId>
             <version>${suda-core.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.suda</groupId>
             <artifactId>suda-spring-boot-autoconfigure</artifactId>
             <version>${suda-core.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
