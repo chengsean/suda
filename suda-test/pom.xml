@@ -11,7 +11,6 @@
     <version>1.0.0</version>
     <name>suda-test</name>
     <properties>
-        <jakarta.servlet-api.version>4.0.4</jakarta.servlet-api.version>
     </properties>
     <dependencies>
         <dependency>
