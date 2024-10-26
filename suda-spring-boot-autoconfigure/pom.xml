@@ -28,12 +28,12 @@
         <dependency>
             <groupId>org.suda</groupId>
             <artifactId>suda-common</artifactId>
-            <version>${suda-core.version}</version>
+            <version>${suda-io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.suda</groupId>
             <artifactId>suda-core</artifactId>
-            <version>${suda-core.version}</version>
+            <version>${suda-io.version}</version>
         </dependency>
     </dependencies>
 </project>
