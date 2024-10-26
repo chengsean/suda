@@ -4,7 +4,7 @@ spring:
   jackson:
     time-zone: GMT+8
 suda:
-  io-security:
+  io:
     chars:
       trim-enabled: true
     xss-attack:
