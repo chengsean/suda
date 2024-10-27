@@ -1,4 +1,4 @@
-package org.suda.core.resolver;
+package org.suda.core.handler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

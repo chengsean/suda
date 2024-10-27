@@ -1,4 +1,4 @@
-package org.suda.core.handler;
+package org.suda.core.resolver;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.suda.test.Constant;
 import org.suda.test.Result;
 import org.suda.test.util.TestUtil;
 import org.suda.autoconfigure.ArgumentResolverConfiguration;
-import org.suda.core.resolver.SecurityMatrixVariableMapMethodArgumentResolver;
 
 import javax.annotation.Resource;
 import java.util.LinkedHashMap;
