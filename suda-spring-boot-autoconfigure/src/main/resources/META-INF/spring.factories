@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.suda.autoconfigure.ArgumentResolverBeanFactoryConfiguration,\
+  org.suda.autoconfigure.ArgumentHandlerConfiguration,\
+  org.suda.autoconfigure.ArgumentResolverConfiguration
