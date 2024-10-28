@@ -27,6 +27,7 @@
         <module>suda-core</module>
         <module>suda-spring-boot-autoconfigure</module>
         <module>suda-spring-boot-starter</module>
+        <module>suda-spring-boot-starter-sample</module>
         <module>suda-test</module>
     </modules>
     <build>
