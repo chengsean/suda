@@ -10,7 +10,13 @@ public interface Constant {
     /** 测试接口前缀 */
     String PREFIX_SERVLET_PATH = "/test";
 
+    String STRING_PREFIX_SERVLET_PATH = PREFIX_SERVLET_PATH + "/string";
+
     String NAME_KEY = "name";
 
     String NAME_VALUE = " chengshaozhuang   ";
+
+    String EMAIL_KEY = "email";
+
+    String EMAIL_VALUE = "520032191110242048@gmail.com";
 }
