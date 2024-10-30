@@ -36,9 +36,7 @@ public class StringArgCheckSampleControllerTests {
 
     private RestTemplate restTemplate;
 
-    private final String host = "http://localhost:8080";
-
-    private final String uriPrefix = host + Constant.STRING_PREFIX_SERVLET_PATH;
+    private final String uriPrefix = Constant.HOST + ":" + Constant.PORT + Constant.STRING_PREFIX_SERVLET_PATH;
 
     private final String xssKeyword = "<script>alert(\"chengshaozhuang\")</script>";
 
