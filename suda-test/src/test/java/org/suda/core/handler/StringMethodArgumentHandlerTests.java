@@ -68,7 +68,7 @@ class StringMethodArgumentHandlerTests {
 
     @Test
     void testSQLInjectionAttacksCheckDisabled1() {
-        // 测试SQL注入攻击的安全检查的启用状态
+        // 测试SQL注入攻击的安全检查的禁用状态 1
         toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uri);
         Object value = stringMethodArgumentHandler.securityChecks(nickname, request, null);
@@ -77,7 +77,7 @@ class StringMethodArgumentHandlerTests {
 
     @Test
     void testSQLInjectionAttacksCheckDisabled2() {
-        // 测试SQL注入攻击的安全检查的启用状态
+        // 测试SQL注入攻击的安全检查的禁用状态 2
         toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(false);
         request = new MockHttpServletRequest(null, uriWhitelist);
         toStringMethodArgumentHandler().getProperties().getSqlInject().setServletPathWhitelist(
@@ -88,7 +88,7 @@ class StringMethodArgumentHandlerTests {
 
     @Test
     void testXSSAttacksCheckWithUriWhitelist() {
-        // 测试白名单接口的XSS攻击的安全检查
+        // 测试白名单接口的XSS攻击的安全检查(白名单接口不处理)
         toStringMethodArgumentHandler().getProperties().getXssAttack().setCheckEnabled(true);
         toStringMethodArgumentHandler().getProperties().getXssAttack().setServletPathWhitelist(
                 new ArrayList<>(Collections.singleton(uriWhitelist)));
@@ -108,7 +108,7 @@ class StringMethodArgumentHandlerTests {
 
     @Test
     void testSQLInjectionAttacksCheckWithUriWhitelist() {
-        // 测试白名单接口的SQL注入攻击的安全检查
+        // 测试白名单接口的SQL注入攻击的安全检查(白名单接口不处理)
         toStringMethodArgumentHandler().getProperties().getSqlInject().setCheckEnabled(true);
         toStringMethodArgumentHandler().getProperties().getXssAttack().setServletPathWhitelist(
                 new ArrayList<>(Collections.singleton(uriWhitelist)));
