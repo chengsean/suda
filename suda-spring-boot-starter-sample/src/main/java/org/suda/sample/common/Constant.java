@@ -13,9 +13,11 @@ public interface Constant {
     int PORT = 8080;
 
     /** 测试接口前缀 */
-    String PREFIX_SERVLET_PATH = "/test";
+    String PREFIX_SERVLET_PATH = "/sample";
 
     String STRING_PREFIX_SERVLET_PATH = PREFIX_SERVLET_PATH + "/string";
+
+    String FILE_PREFIX_SERVLET_PATH = PREFIX_SERVLET_PATH + "/file";
 
     String NAME_KEY = "name";
 
