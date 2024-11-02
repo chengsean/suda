@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- *
+ * 字符串参数检查和处理是在Spring MVC（Servlet）请求映射参数解析的基础上的扩展功能，suda支持大部分常见的请求参数类型。
+ * 当前是常见的接口示例，可运行测试类来快速了解。
+ * {@link FileArgCheckSampleController}
  * @author chengshaozhuang
  * @dateTime 2024-10-27 22:14
  */
