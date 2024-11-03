@@ -10,6 +10,7 @@
     <description>suda</description>
     <properties>
         <java.version>1.8</java.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
         <suda-io.version>1.0.0</suda-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-text.version>1.10.0</commons-text.version>
@@ -21,6 +22,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
     </dependencies>
     <modules>
         <module>suda-common</module>
