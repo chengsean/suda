@@ -1,4 +1,4 @@
-package org.suda.common.util;
+package org.suda.core.util;
 
 
 /**

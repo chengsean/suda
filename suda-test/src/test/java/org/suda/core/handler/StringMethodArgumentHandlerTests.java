@@ -4,9 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.suda.autoconfigure.ArgumentHandlerConfiguration;
-import org.suda.common.exception.SQLKeyboardDetectedException;
-import org.suda.core.handler.MethodArgumentHandler;
-import org.suda.core.handler.StringMethodArgumentHandler;
+import org.suda.core.exception.SQLKeyboardDetectedException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

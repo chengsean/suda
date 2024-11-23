@@ -7,8 +7,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.suda.autoconfigure.ArgumentHandlerConfiguration;
-import org.suda.common.exception.DangerousFileTypeException;
-import org.suda.common.exception.IllegalFileTypeException;
+import org.suda.core.exception.DangerousFileTypeException;
+import org.suda.core.exception.IllegalFileTypeException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

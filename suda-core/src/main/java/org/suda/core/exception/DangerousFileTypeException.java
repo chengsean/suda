@@ -1,4 +1,4 @@
-package org.suda.common.exception;
+package org.suda.core.exception;
 
 /**
  * 有安全隐患的文件类型异常

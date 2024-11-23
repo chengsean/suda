@@ -8,11 +8,11 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.suda.common.exception.SQLKeyboardDetectedException;
+import org.suda.core.exception.SQLKeyboardDetectedException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.suda.core.util.ServletRequestUtils;
-import org.suda.common.util.StringEscapeUtils;
+import org.suda.core.util.StringEscapeUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyDescriptor;

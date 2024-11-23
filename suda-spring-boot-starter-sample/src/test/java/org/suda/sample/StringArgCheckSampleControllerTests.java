@@ -15,7 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.suda.common.exception.SQLKeyboardDetectedException;
+import org.suda.core.exception.SQLKeyboardDetectedException;
 import org.suda.sample.common.Account;
 import org.suda.sample.common.Constant;
 import org.suda.sample.common.Result;

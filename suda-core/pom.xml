@@ -36,9 +36,14 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>io.github.chengsean</groupId>
-            <artifactId>suda-common</artifactId>
-            <version>${suda-io.version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
         </dependency>
     </dependencies>
     <build>

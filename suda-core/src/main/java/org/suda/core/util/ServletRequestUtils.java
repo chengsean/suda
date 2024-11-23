@@ -2,7 +2,6 @@ package org.suda.core.util;
 
 import org.springframework.lang.NonNull;
 import org.springframework.util.AntPathMatcher;
-import org.suda.common.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

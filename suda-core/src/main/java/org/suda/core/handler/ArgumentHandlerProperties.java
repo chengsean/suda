@@ -1,6 +1,6 @@
 package org.suda.core.handler;
 
-import org.suda.common.util.StringUtils;
+import org.suda.core.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

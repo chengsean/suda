@@ -1,4 +1,4 @@
-package org.suda.common.exception;
+package org.suda.core.exception;
 
 /**
  * 非法的文件类型异常：文件扩展名被篡改

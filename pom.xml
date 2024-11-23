@@ -32,7 +32,6 @@
         </dependency>
     </dependencies>
     <modules>
-        <module>suda-common</module>
         <module>suda-core</module>
         <module>suda-spring-boot-autoconfigure</module>
         <module>suda-spring-boot-starter</module>

@@ -28,11 +28,6 @@
         </dependency>
         <dependency>
             <groupId>io.github.chengsean</groupId>
-            <artifactId>suda-common</artifactId>
-            <version>${suda-io.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.chengsean</groupId>
             <artifactId>suda-core</artifactId>
             <version>${suda-io.version}</version>
         </dependency>

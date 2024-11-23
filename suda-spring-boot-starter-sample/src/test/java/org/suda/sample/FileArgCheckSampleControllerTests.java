@@ -14,8 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.suda.common.exception.DangerousFileTypeException;
-import org.suda.common.exception.IllegalFileTypeException;
+import org.suda.core.exception.DangerousFileTypeException;
+import org.suda.core.exception.IllegalFileTypeException;
 import org.suda.sample.common.Constant;
 import org.suda.sample.common.Result;
 

@@ -8,8 +8,8 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypes;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.suda.common.exception.DangerousFileTypeException;
-import org.suda.common.exception.IllegalFileTypeException;
+import org.suda.core.exception.DangerousFileTypeException;
+import org.suda.core.exception.IllegalFileTypeException;
 import org.suda.core.handler.ArgumentHandlerProperties;
 
 import java.io.IOException;

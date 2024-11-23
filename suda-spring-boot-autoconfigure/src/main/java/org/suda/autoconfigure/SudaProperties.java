@@ -2,7 +2,7 @@ package org.suda.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.suda.core.handler.ArgumentHandlerProperties;
-import org.suda.common.util.StringUtils;
+import org.suda.core.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

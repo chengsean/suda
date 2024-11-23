@@ -17,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.suda.test.Constant;
 import org.suda.test.Result;
 import org.suda.autoconfigure.ArgumentResolverConfiguration;
-import org.suda.common.exception.DangerousFileTypeException;
-import org.suda.common.exception.IllegalFileTypeException;
+import org.suda.core.exception.DangerousFileTypeException;
+import org.suda.core.exception.IllegalFileTypeException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Part;

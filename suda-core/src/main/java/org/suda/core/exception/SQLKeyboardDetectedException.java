@@ -1,4 +1,4 @@
-package org.suda.common.exception;
+package org.suda.core.exception;
 
 /**
  * SQL关键词检出异常，入参包含SQL关键词，可能存在SQL注入攻击行为
