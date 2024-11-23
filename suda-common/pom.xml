@@ -20,4 +20,17 @@
             <version>${commons-text.version}</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>${publishing.server-id}</publishingServerId>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
