@@ -8,6 +8,11 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>suda-spring-boot-starter</artifactId>
+    <name>suda-spring-boot-starter</name>
+    <description>该Starter用于IO安全处理，针对字符串、文件入参进行安全检测。基于SpringMVC(spring-web,spring-webmvc)，Servlet。
+        使用了Tika处理文件类型
+    </description>
+    <url>https://gitee.com/chengsean/suda</url>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
