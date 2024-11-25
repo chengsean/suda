@@ -18,7 +18,6 @@ import java.util.Objects;
  * 当前是常见的接口示例，可运行测试类来快速了解。
  * {@link FileArgCheckSampleController}
  * @author chengshaozhuang
- * @dateTime 2024-10-27 22:14
  */
 @RestController
 @RequestMapping(Constant.STRING_PREFIX_SERVLET_PATH)

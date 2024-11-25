@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 参数安全检查自动配置，与{@link ArgumentHandlerProperties}是姐妹类
  * @author chengshaozhuang
- * @dateTime 2024-09-02 13:18
  */
 @ConfigurationProperties(prefix = "suda.io")
 public class SudaProperties {

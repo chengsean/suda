@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 该对象作用于{@link ModelAttribute} 注解的参数的安全检查
  * @author chengshaozhuang
- * @dateTime 2023-08-06 12:03
  */
 public class SecurityServletModelAttributeMethodProcessor extends ServletModelAttributeMethodProcessor {
 

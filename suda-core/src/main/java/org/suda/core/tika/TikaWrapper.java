@@ -21,7 +21,6 @@ import java.util.Optional;
 /**
  * tika包装类，主要用于检测文件类型（MediaType）
  * @author chengshaozhuang
- * @dateTime 2024-09-12 16:53
  */
 public class TikaWrapper {
     private final Metadata metadata;

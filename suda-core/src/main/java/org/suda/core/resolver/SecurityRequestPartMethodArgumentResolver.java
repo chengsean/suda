@@ -17,7 +17,6 @@ import java.util.List;
 /**
  * 该对象作用于{@link RequestPart}注解的、或无注解的{@link MultipartFile}、{@link Part}(文件类型)参数的安全检查
  * @author chengshaozhuang
- * @dateTime 2024-08-02 10:11
  */
 public class SecurityRequestPartMethodArgumentResolver extends RequestPartMethodArgumentResolver {
 

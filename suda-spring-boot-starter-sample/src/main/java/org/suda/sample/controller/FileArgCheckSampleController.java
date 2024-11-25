@@ -15,7 +15,6 @@ import javax.servlet.http.Part;
  * 当前是常见的接口示例，可运行测试类来快速了解。
  * {@link StringArgCheckSampleController}
  * @author chengshaozhuang
- * @dateTime 2024-10-30 22:14
  */
 @RestController
 @RequestMapping(Constant.FILE_PREFIX_SERVLET_PATH)

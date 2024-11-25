@@ -16,7 +16,6 @@ import org.suda.core.tika.TikaWrapper;
 /**
  * {@link MethodArgumentHandler}子类实例配置
  * @author chengshaozhuang
- * @dateTime 2024-08-04 12:45
  */
 @Configuration
 @EnableConfigurationProperties(value = {SudaProperties.class})

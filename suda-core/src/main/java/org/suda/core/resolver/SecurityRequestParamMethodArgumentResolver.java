@@ -18,10 +18,8 @@ import java.util.Collection;
 
 /**
  * {@link RequestParamMethodArgumentResolver}扩展类，检测和处理{@link RequestMapping}注解的方法中带有{@link RequestParam}注解的{@link String}对象、
- * 以及无任何注解的字符串参数类型，包括：{@link String}，包装类中的{@link String}、{@link Model}、{@link Collection<String>}，
- * 文件类型，如：{@link MultipartFile}、{@link Part}等。
+ * 以及无任何注解的字符串参数类型，包括：{@link String}，包装类中的{@link String}、{@link Model}、{@link MultipartFile}、{@link Part}、
  * @author chengshaozhuang
- * @dateTime 2023-07-29 20:13
  */
 public class SecurityRequestParamMethodArgumentResolver extends RequestParamMethodArgumentResolver {
 

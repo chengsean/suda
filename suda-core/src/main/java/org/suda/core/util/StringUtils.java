@@ -7,7 +7,6 @@ import java.util.Objects;
  * 封装工具类：
  * {@link org.apache.commons.lang3.StringUtils}
  * @author chengshaozhuang
- * @dateTime 2024-10-13 22:39
  */
 public abstract class StringUtils {
 
@@ -22,8 +21,7 @@ public abstract class StringUtils {
     /**
      * 字符串前增加'.'字符
      * @author chengshaozhuang
-     * @date 2024-10-24 15:59
-     * @param strings
+     * @param strings strings
      * @return java.lang.String[]
      */
     public static String[] appendDotIfNecessary(String[] strings) {

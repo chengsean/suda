@@ -21,7 +21,6 @@ import java.util.Map;
  * 由于入参{@link Map}对象会转换成字符串放在另一个{@link Map}（即包装/容器类嵌套结构数据）。由于此类参数处理起来会比较复杂，
  * 而且有更方便的替代处理方式如：{@link RequestParam}、{@link MatrixVariable}、{@link RequestBody}等。
  * @author chengshaozhuang
- * @dateTime 2024-07-29 16:48
  */
 public class SecurityPathVariableMapMethodArgumentResolver extends PathVariableMapMethodArgumentResolver {
 

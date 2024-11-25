@@ -17,10 +17,11 @@ import java.util.Map;
 
 /**
  * 该对象作用于{@link RequestParam} 注解{@link Map}参数的安全检查
- * 支持{@link MultiValueMap<String,MultipartFile>}、{@link MultiValueMap<String,Part>}、{@link MultiValueMap<String,String>}
- * {@link Map<String,MultipartFile>}、{@link Map<String,Part>}、{@link Map<String,String>}
+ * 支持:
+ * <pre>{@code MultiValueMap<String,MultipartFile>、MultiValueMap<String,Part>、MultiValueMap<String,String>、
+ * Map<String,MultipartFile>、Map<String,Part>、Map<String,String>}
+ * </pre>
  * @author chengshaozhuang
- * @dateTime 2024-08-16 11:24
  */
 public class SecurityRequestParamMapMethodArgumentResolver extends RequestParamMapMethodArgumentResolver {
 

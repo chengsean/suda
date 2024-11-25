@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * 参数安全检查配置，用于接收自动配置类的数据
  * @author chengshaozhuang
- * @dateTime 2024-10-24 16:18
  */
 public class ArgumentHandlerProperties {
 

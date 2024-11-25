@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * @author chengshaozhuang
- * @dateTime 2024-10-18 16:18
  */
 public class CustomLocalDateSerializer extends StdSerializer<LocalDate> {
 

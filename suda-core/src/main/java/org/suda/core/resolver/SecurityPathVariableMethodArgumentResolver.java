@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 该对象作用于{@link PathVariable} 注解参数的安全检查
  * @author chengshaozhuang
- * @dateTime 2024-07-29 15:11
  */
 public class SecurityPathVariableMethodArgumentResolver extends PathVariableMethodArgumentResolver {
 

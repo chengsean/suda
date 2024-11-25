@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 该对象作用于{@link MatrixVariable} 注解参数的安全检查
  * @author chengshaozhuang
- * @dateTime 2024-07-29 11:21
  */
 public class SecurityMatrixVariableMethodArgumentResolver extends MatrixVariableMethodArgumentResolver {
 

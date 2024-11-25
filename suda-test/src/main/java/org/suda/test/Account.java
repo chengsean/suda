@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 /**
  * @author chengshaozhuang
- * @dateTime 2024-10-18 15:52
  */
 public class Account implements java.io.Serializable {
     private Long sn;

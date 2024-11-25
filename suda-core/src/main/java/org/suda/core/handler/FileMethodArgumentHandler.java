@@ -21,7 +21,6 @@ import java.util.Objects;
 /**
  * 文件类型参数安全检查
  * @author chengshaozhuang
- * @dateTime 2024-08-01 13:37
  */
 public class FileMethodArgumentHandler implements MethodArgumentHandler {
     protected final Logger logger = LoggerFactory.getLogger(FileMethodArgumentHandler.class);
