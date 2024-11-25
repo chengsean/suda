@@ -12,7 +12,24 @@
     <description>该Starter用于IO安全处理，针对字符串、文件入参进行安全检测。基于SpringMVC(spring-web,spring-webmvc)，Servlet。
         使用了Tika处理文件类型
     </description>
-    <url>https://gitee.com/chengsean/suda</url>
+    <url>https://github.com/chengsean/suda</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>chengsean</name>
+            <email>chengsz7890@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/chengsean/suda.git</connection>
+        <developerConnection>scm:git:ssh://github.com:chengsean/suda.git</developerConnection>
+        <url>http://github.com/chengsean/suda/tree/master</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

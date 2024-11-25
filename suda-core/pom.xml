@@ -10,7 +10,24 @@
     <artifactId>suda-core</artifactId>
     <name>suda-core</name>
     <description>Suda安全处理核心模块</description>
-    <url>https://gitee.com/chengsean/suda</url>
+    <url>https://github.com/chengsean/suda</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>chengsean</name>
+            <email>chengsz7890@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/chengsean/suda.git</connection>
+        <developerConnection>scm:git:ssh://github.com:chengsean/suda.git</developerConnection>
+        <url>http://github.com/chengsean/suda/tree/master</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
