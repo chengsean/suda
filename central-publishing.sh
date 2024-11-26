@@ -1,0 +1,1 @@
+mvn clean -pl suda-core,suda-spring-boot-autoconfigure,suda-spring-boot-starter deploy -DskipTests
