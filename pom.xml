@@ -7,7 +7,8 @@
     <version>1.0.0</version>
     <name>suda</name>
     <packaging>pom</packaging>
-    <description>suda</description>
+    <description>WebIO安全插件</description>
+    <url>https://github.com/chengsean/suda</url>
     <properties>
         <java.version>1.8</java.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
@@ -20,6 +21,8 @@
         <jakarta.servlet-api.version>4.0.4</jakarta.servlet-api.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.11.1</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <publishing.server-id>central</publishing.server-id>
@@ -49,19 +52,6 @@
                     <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven-source-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
