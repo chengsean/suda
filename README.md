@@ -13,7 +13,7 @@ suda需要java8或以上，SpringBoot2.x，建议按官方的版本生命周期�
  <dependency>
     <groupId>io.github.chengsean</groupId>
     <artifactId>suda-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 2、根据自身需求修改默认配置
