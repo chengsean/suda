@@ -4,7 +4,7 @@
 
 # suda
 
-一款基於SpringMVC的羽量級IO安全外掛程式（spring-boot-starter）。 它具有穩定性、易用性、靈活性等特點，能夠有效的防範XSS攻擊、
+一款基於SpringMVC的羽量型的IO安全外掛程式（spring-boot-starter）。 它具有穩定性、易用性、靈活性等特點，能夠有效的防範XSS攻擊、
 SQL注入以及識別出潛在的惡意檔（篡改文件後綴名）
 
 ### System Requirements

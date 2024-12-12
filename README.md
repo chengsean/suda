@@ -4,7 +4,7 @@
  
 # suda
 
-一款基于SpringMVC的轻量级IO安全插件（spring-boot-starter）。它具有稳定性、易用性、灵活性等特点，能够有效的防范XSS攻击、 
+一款基于SpringMVC的轻量级的IO安全插件（spring-boot-starter）。它具有稳定性、易用性、灵活性等特点，能够有效的防范XSS攻击、 
 SQL注入以及识别出潜在的恶意文件（篡改文件后缀名）
 
 ### System Requirements
