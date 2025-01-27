@@ -33,4 +33,8 @@ public abstract class StringUtils {
         }
         return normalized;
     }
+
+    public static String trim(String value) {
+        return org.apache.commons.lang3.StringUtils.trim(value);
+    }
 }
