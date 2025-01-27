@@ -3,6 +3,7 @@ package io.github.chengsean.suda.autoconfigure;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.metadata.Metadata;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,12 +13,17 @@ import io.github.chengsean.suda.core.handler.FileMethodArgumentHandler;
 import io.github.chengsean.suda.core.handler.MethodArgumentHandler;
 import io.github.chengsean.suda.core.handler.StringMethodArgumentHandler;
 import io.github.chengsean.suda.core.tika.TikaWrapper;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.Servlet;
 
 /**
  * {@link MethodArgumentHandler}子类实例配置
  * @author chengshaozhuang
  */
 @Configuration
+@ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class, TikaConfig.class })
 @EnableConfigurationProperties(value = {SudaProperties.class})
 public class ArgumentHandlerConfiguration {
 
