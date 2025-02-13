@@ -13,7 +13,6 @@ import java.util.Collection;
 /**
  *
  * @author chengshaozhuang
- * @dateTime 2025-01-18 03:24
  */
 public class ArgumentHandlerHttpServletRequest extends HttpServletRequestWrapper {
 
@@ -43,7 +42,7 @@ public class ArgumentHandlerHttpServletRequest extends HttpServletRequestWrapper
         }
         for (Part part : parts) {
             if (StringUtils.isNotBlank(part.getName())) {
-                fileMethodArgumentHandler.securityChecks(part, request, null);
+                securityCheckFile(part);
             }
         }
         return parts;
@@ -51,12 +50,19 @@ public class ArgumentHandlerHttpServletRequest extends HttpServletRequestWrapper
 
     @Override
     public Part getPart(String name) throws IOException, ServletException {
-        return super.getPart(name);
+        Part part = super.getPart(name);
+        securityCheckFile(part);
+        return part;
+    }
+
+
+    private void securityCheckFile(Part part) {
+        fileMethodArgumentHandler.securityChecks(part, request, null);
     }
 
     @Override
     public String getParameter(String name) {
-        return super.getParameter(name);
+        return securityCheckString(super.getParameter(name));
     }
 
     @Override
@@ -67,8 +73,12 @@ public class ArgumentHandlerHttpServletRequest extends HttpServletRequestWrapper
         }
         for (int i = 0; i < values.length; i++) {
             String value = values[i];
-            values[i] = (String) stringMethodArgumentHandler.securityChecks(value, request, null);
+            values[i] = securityCheckString(value);
         }
         return values;
+    }
+
+    private String securityCheckString(String value) {
+        return (String) stringMethodArgumentHandler.securityChecks(value, request, null);
     }
 }
